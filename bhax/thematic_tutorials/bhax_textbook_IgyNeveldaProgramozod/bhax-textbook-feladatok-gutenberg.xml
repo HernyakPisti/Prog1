@@ -23,12 +23,87 @@
         </para>
         <para>
             Megoldás videó: <link xlink:href="https://youtu.be/zmfT9miB-jY">https://youtu.be/zmfT9miB-jY</link>
-        </para>        
+        </para> 
+      <para>
+Bármilyen progromzási nyelvben vannak feldolgozandó objektumok amiket változók és konstansok alkotnak.
+Ezeket a változókat/konstansokat deklarálással adjuk meg amikor meg kell adni a nevüket és típusukat.
+Hogy a gép tudja mit tegyen az adatokkal arra különböző operátorokat használunk. (+,-,*,/,%).
+Deklaláráskor a legfontosabb lépés a helyes típus kiválasztása mivel ez alapján tudjuk hogy a változó milyet értékeket kaphat, tartalmazhat illetve milyeneket adhat vissza.
+Például egy <programlisting language="c"><![CDATA[ char ]]></programlisting>  típusú változó csak 1 karaktert tartalmazhat, vagyis ha nagyobb szöveggel szeretnénk dolgozni más típust kell választanunk.
+Például hosszabb szövegek tárolására a string típust használják amit C nyelven <programlisting language="c"><![CDATA[ char string[] ]]></programlisting> így deklarálunk. Egy string nevű változóba (nincs definiálva hogy hány karaktert) így hosszabb szöveget is tárolhatunk.
+</para>
+<para>
+A könyv segítségével a C programozási nyelvet tudjuk jobban megérteni.
+</para>
+<para>
+1983-ban az ANSI általl létrehozott bizottság azt kapta feladatul, hogy definiálják a modern C nyelvet átfogóan. A bizottság 1988-ban be is fejezte a definíció elkészítését amit röviden  ANSI C-nek hívnak.
+</para>
+<para>
+Ezek után a nyelvbe különféle minősítők kerültek amik a programozók munkáját voltak hivatottak megkönnyíteni. Ilyen minősítők voltak a "signed" és ennek párja az "unsigned" amivel egy változó előjelét lehetett meghatározni.
+</para>
+<para>
+Bevezettek új adattípusokat is. Például <programlisting language='c'>
+                <![CDATA[
+        short double
+    ]]>
+        </programlisting>
+adattípust. Ennek párja a "long". A különbség a két típust között az, hogy a "short" csak 16 biten míg a "long" 32 biten tudja tárolni az adatot.
+</para>
+<para>
+A C nyelvben vannak alapvető adat típusok.
+Ilyen adat típusok a char (egy karaktert tárol) az int (egész számot tárol) a float (lebegőpontos szám, egyszeres pontosságú) és a double (lebegőpontos szám, kétszeres pontosságú).
+</para>
+<para>
+Az int adat típusnak van 2 fajta minősítője amivel megadhatjuk, hogy az int-nek milyen értékei lehetnek. Ez a két minősítő a "short" és a "long",
+short int értékei −32,767től akár +32,767-ig lehet, míg a long int értékei −2,147,483,647-től akár +2,147,483,647-ig lehet. Azért ilyen nagy a különbség a "short" és a "long" között mivel a "short" 16 míg a "long" 32 biten képes tárolni adatot.
+</para>
     </section>        
     <section>
         <title>Programozás</title>
         <para>                
             <citation>BMECPP</citation>
         </para>
+<para>
+A C++ egy objektum orientált programozási nyelv ami a C nyelv családba tartozik. Nagyon elterjedt nyelv, több program alapja a mai napig.
+</para>
+<para>
+Igaz hogy a C++ alapnak a C-t veszi de sok köztük a különbség is. Ilyen különbség mondjuk a bool.h szüksége a C-ben míg C++-ben nem.
+<programlisting language="c">
+            <![CDATA[
+                #include <stdbool.h>
+                int main() 
+                    { 
+                    bool igaz=true;
+bool hamis=false; 
+                    return 0; 
+                    } 
+            ]]>]
+        </programlisting>
+        <programlisting language='c++'>
+                <![CDATA[
+                int main() 
+                    { 
+                    bool igaz=true;
+bool hamis=false; 
+                    return 0; 
+                    } 
+            ]]>
+        </programlisting>
+</para>
+<para>
+Egy C++ újjításnak köszönhetően két függvény azonos névvel képes futni ha a paraméterezésük különböző.
+<programlisting language="c++">
+        <![CDATA[
+            float f(int a)
+        ]]>]
+    </programlisting>
+
+    <programlisting language="c++">
+        <![CDATA[
+            float f(double a)
+        ]]>]
+    </programlisting>
+A fenti program tehát gond nélkül letud futni mivel a két függvénynek igaz hogy ugyan olyan nevük van viszont mivel más a paraméter listájuk.
+</para>
     </section>        
 </chapter>                
