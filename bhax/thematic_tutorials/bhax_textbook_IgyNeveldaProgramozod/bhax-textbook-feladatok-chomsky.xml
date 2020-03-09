@@ -44,6 +44,22 @@
             BNF-ben a C utasítás fogalmát!
             Majd mutass be olyan kódcsipeteket, amelyek adott szabvánnyal nem fordulnak (például C89), mással (például C99) igen.
         </para>
+<para>
+Backus-Naur-forma környezetfüggetlen nyelvtanok leírására használható metaszintaxis: végeredményben formális nyelvek is leírhatók vele.
+A legtöbb programozási nyelv elméleti leírása és/vagy szemantikai dokumentumai általában BNF-ban vannak leírva.
+A BNF széles körben használatos a számítógépek programozási nyelveinek nyelvtanának leírására, ideértve az utasítás készleteket és a kommunikációs protokollokat is.
+</para>
+<programlisting><![CDATA[
+<utasítás> ::= <címkézett_utasítás> | <kifejezés_utasítás> | <összesített_utasítás> | <kiválasztó_utasítás> | <literációs_utasítás> | <vezérlésátadó_utasítás>
+<címékezett_utasítás> ::= <azonosító> ";" <utasítás>  | "case" <állandó_kifejezés> ":" <utasítás> | "default :" <utasítás>
+<kiválasztó_utasítás> ::= "if" "(" <kifejezés> ")" <utasítás> | "if" "(" <kifejzés> ")" <utasítás> "else" <utasítás> | "switch" "("<kifejezés>")" <utasítás>
+<kifejezés_utasítás> ::= [<kifejezés>] ";"
+<vezérlésátadó_utasítás> ::= "goto" <azonosító> ";" | "continue;" | "break;" | "return" [<kifejezés>] ";"
+<összesített_utasítás> ::= "{" [<deklarációs_lista>] [<utasítási_lista>] "}"
+<deklarációs_lista> ::= <deklaráció> | <deklarációs_lista> <deklaráció>
+<literációs_utasítás> ::= "while" "(" <kifejezés> ")" <utasítás> | "do"  <utasítás> "while" "(" <kifejezés> ")" <utasítás> | "for" "(" [ <kifejezés> ";" <kifejezés> ";"  <kifejezés> ] ")" <utasítás>
+<utasítási_lista> ::= <utasítás> | <utasítási_lista> <utasítás>
+]]></programlisting>
         <para>
             Megoldás videó: 
         </para>
@@ -52,7 +68,20 @@
         </para>
         <para>
             Tanulságok, tapasztalatok, magyarázat...
+<programlisting><![CDATA[
+#include <stdio.h>
+
+int main() {
+for (int i=1;i<=10;i++)
+printf("Szamolunk %d\n",i);
+retutn 0;
+}
+]]></programlisting>
+<para>
+A c89-es szabványban hiba hogyha a ciklus magban deklarálunk egy változót (lásd int i=0), ezt csak c99 vagy c11 szabványban fordíthatjuk le hiba mentesen.
+</para>
         </para>
+
     </section>                     
 
     <section>
@@ -202,6 +231,17 @@ main()
 ]]></programlisting>
         <para>
             Tanulságok, tapasztalatok, magyarázat...
+	Ez is egy .l kiterjesztésű fájl vagyis ez egy lexer forráskód ami egy .c kiterjesztésű kódot készít.
+	Ez is 3 részből áll.
+	Az első részben incluidoljuk a kötelező dolgokat és létrehozunk egy cipher nevű struckuret. Ami egy charból és egy char típusú mutatútömbböl áll, aminek 4 eleme van.
+
+	A szabályok részen belül minden bemeneti karakterre igaz feltétel áll mivel a feltétel "." ami akármiből egyet jelent.
+
+	A bemeneti beolvasása után a kód talált egy megegyező karaktert akkor generál egy véletlen számot és ezzel a számmal választ egy elemet a leet tömbből. A leet tömb elemei között más valószínűségi 		esélyek vannak. Ezek rendre 90% 4% 3% 3%. És mivel egyezésünk volt a found változót "igazra váltjuk".
+
+	Ha a found "hamis" marad akkor a kód végén lévő if teljesül ami általl visszakapjuk a vizsgált karaktert.
+
+	A kód legévégén srand-dal készítünk véletlenszámot.
         </para>
     </section>                     
 
@@ -230,34 +270,37 @@ main()
             <listitem>                                    
                 <programlisting><![CDATA[if(signal(SIGINT, SIG_IGN)!=SIG_IGN)
     signal(SIGINT, jelkezelo);]]></programlisting>
-            </listitem>
+            </listitem><para>Ha a SIGINT jel figyelmen kívül volt hagyva akkor maradjon úgy, azonban ha nem volt figyelmen kívül hagyva akkor a jelkezelő fügvény kezelje.</para>
             <listitem>                                    
                 <programlisting><![CDATA[for(i=0; i<5; ++i)]]></programlisting>            
-            </listitem>
+            </listitem><para>A ciklusban deklarált i változó értékehez először hozzáadunk egyet majd visszadja a megnövelt értékét.</para>
             <listitem>                                    
 
                 <programlisting><![CDATA[for(i=0; i<5; i++)]]></programlisting>            
-            </listitem>
+            </listitem><para>A ciklusban deklarált i változó értékét előszőr visszadja aztán megnöveli eggyel.</para>
             <listitem>                                    
 
                 <programlisting><![CDATA[for(i=0; i<5; tomb[i] = i++)]]></programlisting>            
-            </listitem>
+            </listitem><para>A programnak lekellene futnia de mivel az i változó egyszerre változik és van értékként megadva ezért hiba történik.</para>
             <listitem>                                    
 
                 <programlisting><![CDATA[for(i=0; i<n && (*d++ = *s++); ++i)]]></programlisting>            
-            </listitem>
+            </listitem><para>Rosszul van a for ciklus ciklusmagja felírva, mivel a (*d++ = *s++) a ciklusmagban van felírva és itt feltételként kéne szerepelni == -jel.</para>
             <listitem>                                    
 
                 <programlisting><![CDATA[printf("%d %d", f(a, ++a), f(++a, a));]]></programlisting>            
-            </listitem>
+            </listitem><para>A kód 2 számot fog kiírni az f függvénytől függően.
+Az első esetben "a" eggyel kisebb mint ++a, a második esetben viszont ++a és "a" ugyan az a szám lesz.</para>
             <listitem>                                    
 
                 <programlisting><![CDATA[printf("%d %d", f(a), a);]]></programlisting>            
-            </listitem>
+            </listitem><para>A kód 2 számot fog kiírni. 
+Az első szám amit f függvény ad vissza, a második szám pedig az a szám amit f-nek adtuk az első esetben.</para>
             <listitem>                                    
 
                 <programlisting><![CDATA[printf("%d %d", f(&a), a);]]></programlisting>            
-            </listitem>
+            </listitem><para>A kód 2 számot fog kiírni.
+Az első esetben azt a memória címet írja ki amit az f függvény ad meg, a második esetben pedig azt a változó jelenik meg aminek kiírta a kód a memória címét.</para>
         </orderedlist>
         <para>
             Megoldás forrása:  
@@ -338,7 +381,23 @@ $(\exists y \forall x (y<x) \supset \neg (x \text{ prím}))$
                 <para>függvénymutató egy egészet visszaadó és két egészet kapó függvényre mutató mutatót visszaadó, egészet kapó függvényre</para>                        
             </listitem>            
         </itemizedlist>            
+	<programlisting><![CDATA[#include <stdio.h>
 
+	int* eg(); //egészre mutató mutatót visszaadó függvény
+
+	int main () {
+
+	int a; //egész
+	int* b; //egészre mutató mutató
+	int* c = &a; //egész referenciája
+	int d[100]; //egészek tömbbje
+	int* e = &d[10] //egészek tömbbjének referenciája (nem az első elemé)
+	int* pp[100]; //egészre mutató mutatók tömbbje
+	int* (*eg_pointer) ();//egészre mutató mutatót visszaadó függvényre mutató mutató
+	int (*egesz (int c3)) (int c1, int c2);//egészet visszaadó és két egészet kapó függvényre mutató mutatót visszaadó, egészet kapó függvény
+	int (*(*egeszre) (int f3)) (int f1, int f2); //függvénymutató egy egészet visszaadó és két egészet kapó függvényre mutató mutatót visszaadó, egészet kapó függvényre
+	return 0;
+	}]]></programlisting>            
         <para>
             Mit vezetnek be a programba a következő nevek?
         </para>
