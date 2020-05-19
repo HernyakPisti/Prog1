@@ -45,13 +45,41 @@
             Majd mutass be olyan kódcsipeteket, amelyek adott szabvánnyal nem fordulnak (például C89), mással (például C99) igen.
         </para>
         <para>
-            Megoldás videó: 
+            Megoldás videó: <link xlink:href="https://youtu.be/S_jBmmQixQs">https://youtu.be/S_jBmmQixQs</link>
         </para>
         <para>
-            Megoldás forrása:  
+            Megoldás forrása:  <link xlink:href="https://github.com/HernyakPisti/Prog1/tree/master/bhax/thematic_tutorials/bhax_textbook/chomsky">https://github.com/HernyakPisti/Prog1/tree/master/bhax/thematic_tutorials/bhax_textbook/chomsky</link>
         </para>
-        <para>
+	<para>
+	BNF-ben definiálva a C utasítás fogalma
+	</para>
+	<para>
+	Backus-Naur-forma környezetfüggetlen nyelvtanok leírására használható metaszintaxis: végeredményben formális nyelvek is leírhatók vele.
+	A legtöbb programozási nyelv elméleti leírása és/vagy szemantikai dokumentumai általában BNF-ban vannak leírva.
+	A BNF széles körben használatos a számítógépek programozási nyelveinek nyelvtanának leírására, ideértve az utasítás készleteket és a kommunikációs protokollokat is.
+	</para>
+	<programlisting><![CDATA[
+	<utasítás> ::= <címkézett_utasítás> | <kifejezés_utasítás> | <összesített_utasítás> | <kiválasztó_utasítás> | <literációs_utasítás> | <vezérlésátadó_utasítás>
+	<címékezett_utasítás> ::= <azonosító> ";" <utasítás>  | "case" <állandó_kifejezés> ":" <utasítás> | "default :" <utasítás>
+	<kiválasztó_utasítás> ::= "if" "(" <kifejezés> ")" <utasítás> | "if" "(" <kifejzés> ")" <utasítás> "else" <utasítás> | "switch" "("<kifejezés>")" <utasítás>
+	<kifejezés_utasítás> ::= [<kifejezés>] ";"
+	<vezérlésátadó_utasítás> ::= "goto" <azonosító> ";" | "continue;" | "break;" | "return" [<kifejezés>] ";"
+	<összesített_utasítás> ::= "{" [<deklarációs_lista>] [<utasítási_lista>] "}"
+	<deklarációs_lista> ::= <deklaráció> | <deklarációs_lista> <deklaráció>
+	<literációs_utasítás> ::= "while" "(" <kifejezés> ")" <utasítás> | "do"  <utasítás> "while" "(" <kifejezés> ")" <utasítás> | "for" "(" [ <kifejezés> ";" <kifejezés> ";"  <kifejezés> ] ")" <utasítás>
+	<utasítási_lista> ::= <utasítás> | <utasítási_lista> <utasítás>
+	]]></programlisting>
+	<para>
             Tanulságok, tapasztalatok, magyarázat...
+<programlisting language="c"><![CDATA[
+#include <stdio.h>
+int main(){
+for(int i=0;i<10;i++)
+printf("%d\n",i);
+return 0;
+}
+]]></programlisting>
+A kód fordításához használjuk elsőnek a "gcc version.c -o version -std=c99" parancsot majd futassuk a "./version" paranccsal. Ezzel a paranccsal hiba nélkül fordul és fut a kód. Azonban ha a fordításnál a parancsot máshogy írjuk, "gcc version.c -o version -std=c89" valahogy így,azonban  hibát kapunk mivel a fordításnál megadott "std=c89" kapcsoló miatt a kódot C89-es szabványon fordítjuk amiben nem lehet a for ciklus ciklusmagjában deklarálni változót, azonban ez C99-es szabványban már lehet.
         </para>
     </section>                     
 
@@ -63,13 +91,38 @@
             a feladat lényege, hogy lexert használjunk, azaz óriások vállán álljunk és ne kispályázzunk!
         </para>
         <para>
-            Megoldás videó: 
+            Megoldás videó: <link xlink:href="https://youtu.be/S_jBmmQixQs">https://youtu.be/S_jBmmQixQs</link>
         </para>
         <para>
-            Megoldás forrása:  
+            Megoldás forrása:  <link xlink:href="https://github.com/HernyakPisti/Prog1/tree/master/bhax/thematic_tutorials/bhax_textbook/chomsky">https://github.com/HernyakPisti/Prog1/tree/master/bhax/thematic_tutorials/bhax_textbook/chomsky</link>
         </para>
         <para>
-            Tanulságok, tapasztalatok, magyarázat...
+            Tanulságok, tapasztalatok, magyarázat... 
+<programlisting language="c"><![CDATA[
+%{
+#include <stdio.h>
+int realnum = 0; //hány változót adtunk a bementre
+%}
+digit [0-9]
+%%
+{digit}*(\.{digit}+)? {realnum++;
+printf("[realnum: %s %f]", yytext, atof(yytext));
+}
+%%
+int main(){
+yylex();
+printf("Number of real numbers: %d\n", realnum);
+return 0;
+}
+]]></programlisting>
+
+Ez az első kódunk ami .l végződésű tehát ezt máshogy kell fordítanunk mint az eddigieket. Elsőnek is térjünk ki hogy mit takar .l végződés. A .l végződésből tudjuk hogy egy lex fáljról beszélünk amit úgy lehetne körülírni hogy adunk meg neki különböző kritériumokat és azok alapján készít nekünk egy teljesen új kódot ami a megadott kritériumok alapján dolgozok. Ezek a kritériumok közül az elsőben szerepelnek a .c részek pl include-ok, struktúrák/tömbök/változók deklarálása.. Ezt választja el az úgy nevezett szabályrendszertől "%%" jelölés.
+
+Ezután adjuk meg a szabályrendszert. Itt a szabályrendszerben egy sor van ami fontosabb: "{digit}*(\.{digit}+)?" Ebben a sorban írjuk le a lexernek hogy milyen alakú a valós szám. A digit jelölés pár sorral fentebb van kifejtve ami csak annyit tesz hogy digit [0-9] azaz a digit egy 0-tól 9-ig lévő bármilyen szám lehet. A * azt jelöli hogy bármennyi lehet de legalább egy kell hogy legyen. Ezután a "\." rész csak egyszerűen a pontot jelöli a \ jel védi le a pontot hogy azt .-nak olvassa a lexer. ami ezután jön pedig a valósz szám utolsó része a tizedes számok. Ezek is 0-9 tartományból lehetnek számok és a "+" jelöli azt hogy ebből több is lehet.
+
+Ezután jön a lexer utolsó része ahol egyszerűen leírjuk a maint amiben a "yylex()" sor indítja el a lexer függvényt, az utána lévő sorok meg már ismerősek egyszerű kiírás és visszatérés 0-val ha minden sikerült.
+
+Most hogy tudjuk mi az a lexer fordítsuk és futtassuk. Elsőnek kell a .l forrásból kell készíteni egy .c forrást. Ezt a "-lex real.l" paranccsal tesszük meg. Ezután az aktuális könyvtárba elkészül nekünk a .c forrás. Ezt a "gcc lex.yy.c -lfl" paranccsal fordítsuk és ezután a "./a.out" paranccsal futtassuk. Az -lfl kapcsoló a lexer miatt szükséges.
         </para>
     </section>                     
 
@@ -79,13 +132,98 @@
             Lexelj össze egy l33t ciphert!
         </para>
         <para>
-            Megoldás videó: 
+            Megoldás videó: <link xlink:href="https://youtu.be/S_jBmmQixQs">https://youtu.be/S_jBmmQixQs</link>
         </para>
         <para>
-            Megoldás forrása:  
+            Megoldás forrása:  <link xlink:href="https://github.com/HernyakPisti/Prog1/tree/master/bhax/thematic_tutorials/bhax_textbook/chomsky">https://github.com/HernyakPisti/Prog1/tree/master/bhax/thematic_tutorials/bhax_textbook/chomsky</link>
         </para>
         <para>
             Tanulságok, tapasztalatok, magyarázat...
+
+<programlisting language="c"><![CDATA[
+%{
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <ctype.h>
+#define LEETSIZE (sizeof leetdict / sizeof (struct cypher))
+
+struct cypher {
+char c;
+char* leet[4];
+}
+leetdict[]={ 
+	  {'a', {"4", "4", "@", "/-\\"}},
+	  {'b', {"b", "8", "|3", "|}"}},
+	  {'c', {"c", "(", "<", "{"}},
+	  {'d', {"d", "|)", "|]", "|}"}},
+	  {'e', {"3", "3", "3", "3"}},
+	  {'f', {"f", "|=", "ph", "|#"}},
+	  {'g', {"g", "6", "[", "[+"}},
+	  {'h', {"h", "4", "|-|", "[-]"}},
+	  {'i', {"1", "1", "|", "!"}},
+	  {'j', {"j", "7", "_|", "_/"}},
+	  {'k', {"k", "|<", "1<", "|{"}},
+	  {'l', {"l", "1", "|", "|_"}},
+	  {'m', {"m", "44", "(V)", "|\\/|"}},
+	  {'n', {"n", "|\\|", "/\\/", "/V"}},
+	  {'o', {"0", "0", "()", "[]"}},
+	  {'p', {"p", "/o", "|D", "|o"}},
+	  {'q', {"q", "9", "O_", "(,)"}},
+	  {'r', {"r", "12", "12", "|2"}},
+	  {'s', {"s", "5", "$", "$"}},
+	  {'t', {"t", "7", "7", "'|'"}},
+	  {'u', {"u", "|_|", "(_)", "[_]"}},
+	  {'v', {"v", "\\/", "\\/", "\\/"}},
+	  {'w', {"w", "VV", "\\/\\/", "(/\\)"}},
+	  {'x', {"x", "%", ")(", ")("}},
+	  {'y', {"y", "", "", ""}},
+	  {'z', {"z", "2", "7_", ">_"}},
+	  
+	  {'0', {"D", "0", "D", "0"}},
+	  {'1', {"I", "I", "L", "L"}},
+	  {'2', {"Z", "Z", "Z", "e"}},
+	  {'3', {"E", "E", "E", "E"}},
+	  {'4', {"h", "h", "A", "A"}},
+	  {'5', {"S", "S", "S", "S"}},
+	  {'6', {"b", "b", "G", "G"}},
+	  {'7', {"T", "T", "j", "j"}},
+	  {'8', {"X", "X", "X", "X"}},
+	  {'9', {"g", "g", "j", "j"}}
+};
+
+%}
+%%
+. {
+int found = 0;
+for (int i = 0; i < LEETSIZE; ++i){
+if (leetdict[i].c == tolower(*yytext)){
+int r = 1+(int) (100.0*rand()/RAND_MAX+1.0);
+
+printf("%s", leetdict[i].leet[r%4]);
+found = 1;
+break;
+}
+}
+if (!found)
+printf("%c", *yytext);
+}
+%%
+
+int main(){
+srand(time(NULL)+getpid());
+yylex();
+return 0;
+} 
+]]></programlisting>
+
+Ebben a feladatban is egy lexert kell használni. Itt is ugyan az a felállás mint az előző feladatban. Készítünk egy .l forrást ami készít nekünk egy .c forrást azokkal a kritériumokkal amikkel mi készítettük el a .l forrást.
+
+Ebben a kódban is az első részben különböző include-ok szerepelnek, konstans/tömb/stuktúra definiálás.
+Ezután jön megint a szabályrendszer. A szabályrendszernek az az elve ha talál a leetdict nevű tömbből egy megeggyező elemet a bementről akkor azt kicseréli az azonos sorban lévő másik karakter(ekkel), és miután egyezés van akkor ki is lépünk a ciklusból hogy ne menjünk tovább hiszen egy karaktert csak egyszer kell kicserélni.
+A szabályrendszer után pedig jön a main, ebben is meghívjuk a lexert a "yylex()" sorral a "srand" függvény pedig a random szám miatt kell, mivel random hogy a megtalált karaktert mire cseréljük ki.
+
+Most hogy tudjuk hogy működik a forrás fordítsuk futtassuk. Ezt a "lex leet.l" paranccsal tesszük ez elkészíti nekünk a .c forrást. Ezt a "gcc lex.yy.c -lfl" paranccsal fordítsuk és az "./a.out" paranccsal futtassuk. A "-lfl" kapcsoló itt is a lexer miatt szükséges.
         </para>
     </section>                     
 
@@ -114,46 +252,52 @@
             <listitem>                                    
                 <programlisting><![CDATA[if(signal(SIGINT, SIG_IGN)!=SIG_IGN)
     signal(SIGINT, jelkezelo);]]></programlisting>
+<para>Hiba: Return a value ignored. Ha a SIGINT jel figyelmen kívül volt hagyva akkor maradjon úgy, azonban ha nem volt figyelmen kívül
+hagyva akkor a jelkezelő fügvény kezelje.</para>
             </listitem>
             <listitem>                                    
-                <programlisting><![CDATA[for(i=0; i<5; ++i)]]></programlisting>            
+                <programlisting><![CDATA[for(i=0; i<5; ++i)]]></programlisting>
+<para>A ciklusban deklarált i változó értékehez először hozzáadunk egyet majd visszadja a megnövelt értékét.</para>       
             </listitem>
             <listitem>                                    
-
-                <programlisting><![CDATA[for(i=0; i<5; i++)]]></programlisting>            
+                <programlisting><![CDATA[for(i=0; i<5; i++)]]></programlisting> 
+<para>A ciklusban deklarált i változó értékét előszőr visszadja aztán megnöveli eggyel.</para>
             </listitem>
             <listitem>                                    
-
-                <programlisting><![CDATA[for(i=0; i<5; tomb[i] = i++)]]></programlisting>            
+                <programlisting><![CDATA[for(i=0; i<5; tomb[i] = i++)]]></programlisting>
+<para>Hiba:Expression has undefined behavior (left operand uses i, modified bi right operand). A programnak lekellene futnia de mivel az i változó egyszerre változik és van értékként megadva ezért hiba
+történik.</para>
             </listitem>
             <listitem>                                    
-
-                <programlisting><![CDATA[for(i=0; i<n && (*d++ = *s++); ++i)]]></programlisting>            
+                <programlisting><![CDATA[for(i=0; i<n && (*d++ = *s++); ++i)]]></programlisting>
+<para>Hiba: Right operand is non-boolean (int). Rosszul van a for ciklus ciklusmagja felírva, mivel a (*d++ = *s++) a ciklusmagban van felírva és itt feltételként kéne szerepelni.</para>
             </listitem>
             <listitem>                                    
-
-                <programlisting><![CDATA[printf("%d %d", f(a, ++a), f(++a, a));]]></programlisting>            
+                <programlisting><![CDATA[printf("%d %d", f(a, ++a), f(++a, a));]]></programlisting>
+<para>Hibák: Argument 2 modifies a, used by argument 1 és Argument 1 modifies a, used by argument 2. A kód 2 számot fog kiírni az f függvénytől függően. Az első esetben "a" eggyel kisebb mint ++a, a második esetben viszont ++a és "a" ugyan az a szám lesz.</para>
             </listitem>
             <listitem>                                    
-
-                <programlisting><![CDATA[printf("%d %d", f(a), a);]]></programlisting>            
+                <programlisting><![CDATA[printf("%d %d", f(a), a);]]></programlisting>
+<para>A kód 2 számot fog kiírni. Az első amit az f függvény ad vissza a második amit pedig az f-nek adtunk át elsőnek.</para>
             </listitem>
             <listitem>                                    
-
-                <programlisting><![CDATA[printf("%d %d", f(&a), a);]]></programlisting>            
+                <programlisting><![CDATA[printf("%d %d", f(&a), a);]]></programlisting>
+<para>A kód 2 számot fog kiírni. Az első szám az a memória cím amit az f függvény ad meg, a második esetben pedig az a szám aminek kiírta a kód a memória címét.</para>
             </listitem>
         </orderedlist>
         <para>
-            Megoldás forrása:  
+            Megoldás forrása:  <link xlink:href="https://github.com/HernyakPisti/Prog1/tree/master/bhax/thematic_tutorials/bhax_textbook/chomsky">https://github.com/HernyakPisti/Prog1/tree/master/bhax/thematic_tutorials/bhax_textbook/chomsky</link>
         </para>
 
         <para>
-            Megoldás videó: 
+            Megoldás videó: <link xlink:href="https://youtu.be/S_jBmmQixQs">https://youtu.be/S_jBmmQixQs</link>
         </para>
 
         <para>
             Tanulságok, tapasztalatok, magyarázat...
-        </para>
+Ebben a feladatban több különböző forráskódot használtunk. Volt köztük ami warningot okozott míg volt ami nem. A warningok pontosabb megértéséhez használjuk a "splint" parancsot.
+A forrást pedig a "gcc splint.c -o splint" paranccsal fordítsuk és a "./splint" paranccsal futtassuk ami nekünk egy csomó különböző számot ír ki, de itt most nem ez a lényeg, hanem a "splint splint.c" parancs eredménye. A parancs után megjelenik a terminálban különböző warningok amiket jobban kifejtve olvashatunk el.
+         </para>
 
     </section>                     
 
@@ -262,13 +406,33 @@ $(\exists y \forall x (y<x) \supset \neg (x \text{ prím}))$
 
 
         <para>
-            Megoldás videó: 
+            Megoldás videó: <link xlink:href="https://youtu.be/S_jBmmQixQs">https://youtu.be/S_jBmmQixQs</link>
         </para>
         <para>
-            Megoldás forrása:  
+            Megoldás forrása:  <link xlink:href="https://github.com/HernyakPisti/Prog1/tree/master/bhax/thematic_tutorials/bhax_textbook/chomsky">https://github.com/HernyakPisti/Prog1/tree/master/bhax/thematic_tutorials/bhax_textbook/chomsky</link>
         </para>
         <para>
             Tanulságok, tapasztalatok, magyarázat...
+<programlisting language="c"><![CDATA[
+#include <stdio.h>
+
+int* eg(); //egészre mutató mutatót visszaadó függvény
+
+int main () {
+
+int a; //egész
+int* b; //egészre mutató mutató
+int* c = &a; //egész referenciája
+int d[100]; //egészek tömbbje
+int* e = &d[10]; //egészek tömbbjének referenciája (nem az első elemé)
+int* pp[100]; //egészre mutató mutatók tömbbje
+int* (*eg_pointer) ();//egészre mutató mutatót visszaadó függvényre mutató mutató
+int (*egesz (int c3)) (int c1, int c2);//egészet visszaadó és két egészet kapó függvényre mutató mutatót visszaadó, egészet kapó függvény
+int (*(*egeszre) (int f3)) (int f1, int f2); //függvénymutató egy egészet visszaadó és két egészet kapó függvényre mutató mutatót visszaadó, egészet kapó függvényre
+return 0;
+}
+]]></programlisting>
+A programot a "gcc deklaracio.c -o dekl" paranccsal fordítsuk és a "./dekl" paranccsal futtasuk. A terminálba nem fog semmi megjelenni mivel csak lefordul a kód a benne lévő kód sorokat egy egyszerű "cat deklaracio.c" paranccsal tekinthetjük meg.
         </para>
     </section>                     
 
