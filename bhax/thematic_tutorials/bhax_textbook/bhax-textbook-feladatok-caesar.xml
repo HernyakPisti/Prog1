@@ -6,18 +6,68 @@
         </keywordset>
     </info>
     <section>
-        <title><type>int ***</type> háromszögmátrix</title>
+        <title><type>double **</type> háromszögmátrix</title>
         <para>
            
         </para>
         <para>
-            Megoldás videó:
+            Megoldás videó:<link xlink:href="https://youtu.be/rfLaGXYM8_4">https://youtu.be/rfLaGXYM8_4</link>
         </para>
         <para>
-            Megoldás forrása:                
+            Megoldás forrása:        <link xlink:href="https://github.com/HernyakPisti/Prog1/tree/master/bhax/thematic_tutorials/bhax_textbook/caesar">https://github.com/HernyakPisti/Prog1/tree/master/bhax/thematic_tutorials/bhax_textbook/caesar</link>        
         </para>
         <para>
             Tanulságok, tapasztalatok, magyarázat...
+<programlisting language="c"><![CDATA[
+#include <stdlib.h>
+#include <stdio.h>
+int main(){
+
+double **tm;
+int nr=5;
+
+if((tm = (double**) malloc (nr*sizeof(double*)))==NULL)
+	return -1;
+
+for (int i=0; i<nr; ++i){
+	if((tm[i]=(double*) malloc((i+1)*sizeof(double)))==NULL){
+		free (tm);
+		return -1;
+	}
+}
+
+for (int i=0; i<nr;++i){
+	for (int j=0;j<i+1;++j)
+		tm [i][j] = i +j;
+}
+
+for (int i=0; i<nr;++i){
+	for (int j=0; j<i+1;++j)
+		printf("%f\t",tm[i][j]);
+	printf("\n");
+}
+
+for (int i=0; i<nr;++i){
+	free(tm[i]);	
+}
+	free(tm);
+	return 0;
+
+}
+]]></programlisting>
+A feladatban főleg a malloc és a free használata a lényeg ezért róluk röviden pár szóban. A free/malloc páros memória kezelésre használják, a malloc foglal a free felszabadítja a memóriát. A kódban használjak a malloc visszatérési értékét is ami NULL ha nem sikerül a memória foglalás. A malloc alap visszatérési típusa void * mi a kódban viszont double** visszatérési típust akarunk. A mallocnak megkell adni paraméterként azt hogy mennyi memóriát kell lefoglalni. A free-nek megkell adni paraméterként egy mutatót hogy melyik memóriá területet szabadítsa fel.
+
+A kódot a "gcc tm.c -o tm" paranccsal fordítsuk és a "./tm" paranccsal futtassuk. Ekkor a kimeneten megjelenik az alsó háromszög mátrixunk, viszont nem látjuk azt ha van memória foglalási/felszabadítási hiba ezért futtassuk le a kódot a valggrind-el is ami kijelzi nekünk a memória változását a kód futása után. "valgrind ./tm" paranccsal látjuk azt hogy nincs memória foglalási/felszabadítási hiba.
+
+A kód elején a szükséges include-ok szerepelnek utána pedig a változók deklarálása. A "double **tm" a mutatók tömbjére fog hivatkozni, mert lesz egy tömbünk amiben mutatók lesznek és ezek a mutatók lesznek a sor és oszlopindexekre mutatók, szóval tulajdonképpen egy két dimenziós tömb. Az "int nr=5" pedig hogy hány sort használunk.
+
+Ezután egy hiba kezelés következik: Hogyha a tm-nek nem sikerül lefogalni a memóriát a malloc-cal akkor az NULL értéket ad vissza és ha ez történik akkor egy egyszerű -1 értékkel kilépünk. Ilyen hiba történhet hogyha mondjuk nem tudjuk a memóriát írni avagy nincs elegendő memória vagy a mallocnak megadott méret 0.
+
+Ezután a tm-nek elkezdjük lefoglalni a méretet egy for ciklussal. Itt (nr*sizeof(double*))-nyi memórát foglalunk, itt is történik hibakezelés és ez történne meg akkor felszabadítjuk a tm-et és kilépünk a programból.
+
+Ezután a tm-et feltöltjük értékekkel két egymásba ágyazott for ciklussal. Az indexelésre figyelni kell nehogy túlindexeljük a ciklusunk.
+
+Ezután a tm-ben lévő értékek kiírása következik két egymásba ágyazott for ciklussal. Ezután felszabídtjuk a memóriát a free használatával.
         </para>            
     </section>        
     <section>
@@ -26,13 +76,52 @@
             Írj egy EXOR titkosítót C-ben!
         </para>
         <para>
-            Megoldás videó:
+            Megoldás videó:<link xlink:href="https://youtu.be/rfLaGXYM8_4">https://youtu.be/rfLaGXYM8_4</link>
         </para>
         <para>
-            Megoldás forrása:                
+            Megoldás forrása:      <link xlink:href="https://github.com/HernyakPisti/Prog1/tree/master/bhax/thematic_tutorials/bhax_textbook/caesar">https://github.com/HernyakPisti/Prog1/tree/master/bhax/thematic_tutorials/bhax_textbook/caesar</link>          
         </para>
         <para>
             Tanulságok, tapasztalatok, magyarázat...
+<programlisting language="c"><![CDATA[
+#include <unistd.h>
+#include <string.h>
+
+#define MAX_KULCS 100
+#define BUFFER_MERET 256
+
+int main(int argc, char ** argv){
+
+char kulcs[MAX_KULCS];
+char buffer[BUFFER_MERET];
+
+int kulcs_index = 0;
+int olvasott_bajtok = 0;
+
+int kulcs_meret = strlen(argv[1]);
+strncpy(kulcs,argv[1], MAX_KULCS);
+
+
+while(olvasott_bajtok = read(0, (void*) buffer, BUFFER_MERET)){
+	for (int i =0; i<olvasott_bajtok;++i){
+	
+		buffer[i] = buffer[i] ^ kulcs[kulcs_index];
+		kulcs_index = (kulcs_index+1) % kulcs_meret;
+	}
+
+	write(1,buffer,olvasott_bajtok);
+}
+
+return 0;
+}
+]]></programlisting>
+A feladatban az XOR titkosítást fogjuk használni ami bitenként történik, ennek a titkosításnak nagy előnye hogy nagyon gyors és ha mégegyszer elvégezzük a titkosítást ugyan azt kapjuk vissza. Másik nagy előnye hogy alacsony szinten történik.
+
+A kódot "gcc titok.c -o titok" paranccsal fordítsuk majd a "./titok kulcs bemeneti fálj kimeneti fálj" a mi esetünkben a kulcs méret 8 a bemeneti fálj a tiszta.txt.
+
+A kód elején a szokásos include-ok és utána konstansok definiálása. Ezután következik a main. A mainben létrehozunk két char típusú tömböt, utána deklarálunk két int-et amik a ciklusokhoz fognak kelleni. Ezután az "int kulcs_meret = strlen(argv[1])" sorral a kulcs_meret-nek megadjuk a parancssori argomentumként érkezett string hosszát. A következő sorban a strncpy függvénnyel lemásoljuk a kulcs változóba a kulcsot.
+
+Ezután jön a ciklus ami addig fut amig van bemenet mivel a read függvényt használjuk beolvasásra aminek három paramétere van, honnan olvasunk (0-van megadva ami a sztender bemenet), hova olvasunk és hány bitet akarunk olvasni. A while ciklusban belül van egy for ciklus amiben történik a titkosítás. A buffer[i]-t mindig felülírjuk a titkosított karakterrel, ezután léptetjük a kulcsot is de mivel a kulcs sokkal rövidebb mint a bemenet ezért mindig maradékosan leosztjuk a kulcs_merettel így ha kell újra kezdjük a kulcs_index-et. Ezután kiírjuk a titkosított szöveget ami általában valami szemét lesz. A wrtie függvényt használjuk erre aminek ugyan úgy három paramétere van, hova írjunk (1 van megadva mivel az jelenti a sztender kimenetet), honnan írunk és mennyi bitet írunk.
         </para>            
     </section>        
     <section>
@@ -56,13 +145,192 @@
             Írj egy olyan C programot, amely megtöri az első feladatban előállított titkos szövegeket!
         </para>
         <para>
-            Megoldás videó:
+            Megoldás videó:<link xlink:href="https://youtu.be/rfLaGXYM8_4">https://youtu.be/rfLaGXYM8_4</link>
         </para>
         <para>
-            Megoldás forrása:                
+            Megoldás forrása:    <link xlink:href="https://github.com/HernyakPisti/Prog1/tree/master/bhax/thematic_tutorials/bhax_textbook/caesar">https://github.com/HernyakPisti/Prog1/tree/master/bhax/thematic_tutorials/bhax_textbook/caesar</link>            
         </para>
         <para>
             Tanulságok, tapasztalatok, magyarázat...
+<programlisting language="c"><![CDATA[
+#define MAX_TITKOS 4096
+#define OLVASAS_BUFFER 256
+#define KULCS_MERET 8
+#define _GNU_SOURCE
+
+#include <string.h>
+#include <stdio.h>
+#include <unistd.h>
+
+double atlagos_szohossz(const char titkos[],int titkos_meret){
+	int sz=0;
+	for (int i=0; i<titkos_meret;i++)
+		if(titkos[i] == ' ')
+			++sz;
+
+	return (double) titkos_meret / sz;
+}
+
+int tiszta_lehet(const char titkos[],int titkos_meret){
+
+	double szohossz = atlagos_szohossz(titkos,titkos_meret);
+
+	return szohossz < 9.0 && szohossz > 6.0 && 
+	strcasestr (titkos, "nem") && strcasestr (titkos, "hogy") && strcasestr (titkos, "az") &&strcasestr (titkos, "ha");
+
+}
+
+void exor (const char kulcs[], int kulcs_meret, char titkos[], int titkos_meret){
+	int kulcs_index=0;
+	for (int i=0;i<titkos_meret;++i){
+		titkos[i]=titkos[i]^kulcs[kulcs_index];
+		kulcs_index=(kulcs_index+1)%kulcs_meret;
+	}
+}
+int exor_tores(const char kulcs[], int kulcs_meret, char titkos[], int titkos_meret){
+
+	exor(kulcs, kulcs_meret, titkos, titkos_meret);
+
+	return tiszta_lehet (titkos,titkos_meret);
+
+}
+
+int main(){
+	
+	char kulcs[KULCS_MERET];
+	char titkos[MAX_TITKOS];
+	char *p=titkos;
+	int olvasott_bajtok;
+
+	while(olvasott_bajtok=read(0,(void*) p, 
+		(p-titkos+OLVASAS_BUFFER<
+		MAX_TITKOS) ? OLVASAS_BUFFER : titkos + MAX_TITKOS -p))
+
+	p+=olvasott_bajtok;
+
+	for(int i=0; i<MAX_TITKOS-(p-titkos); i++){
+		titkos[p-titkos+i]='\0';
+	}
+
+	for(int ii='0';ii<='9';++ii)
+		for(int ji='0';ji<='9';++ji)
+			for(int ki='0';ki<='9';++ki)
+				for(int li='0';li<='9';++li)
+					for(int mi='0';mi<='9';++mi)
+						for(int ni='0';ni<='9';++ni)
+							for(int oi='0';oi<='9';++oi)
+								for(int pi='0';pi<='9';++pi){
+									kulcs[0]=ii;
+									kulcs[1]=ji;
+									kulcs[2]=ki;
+									kulcs[3]=li;
+									kulcs[4]=mi;
+									kulcs[5]=ni;
+									kulcs[6]=oi;
+									kulcs[7]=pi;
+
+									if(exor_tores(kulcs,KULCS_MERET,titkos,p-titkos))
+										printf(
+											"Kulcs: [%c%c%c%c%c%c%c%c]\nTiszta szöveg: [%s\n]",ii,ji,ki,li,mi,ni,oi,pi,titkos);
+
+									exor (kulcs,KULCS_MERET,titkos,p-titkos);
+								}
+									
+
+
+	return 0;
+}
+]]></programlisting>
+Ebben a feladatban a XOR titkosítóval kapott szöveget fogjuk visszafejteni, ezzel is látva azt hogy ha valamin kétszer használjuk a XOR műveletet önmagát kapjuk vissza.
+
+A kódot "gcc nem_titok.c -o nem_titok" paranccsak fordítsuk majd "./nem titok kulcs bemeneti fálj" paranccsal futtasuk. A kulcs 8 karakterből áll, a bemeneti fálj pedig az a fálj amit a titok.c program generált nekünk.
+A kód elején a szükséges include-ok és a konstansok definiálása. Ezután több függvény jön amikről később.
+Kezdjük a main függvénnyel:
+<programlisting language="c"><![CDATA[
+int main(){
+	
+	char kulcs[KULCS_MERET];
+	char titkos[MAX_TITKOS];
+	char *p=titkos;
+	int olvasott_bajtok;
+
+	while(olvasott_bajtok=read(0,(void*) p,(p-titkos+OLVASAS_BUFFER<MAX_TITKOS) ? OLVASAS_BUFFER : titkos + MAX_TITKOS -p))
+
+	p+=olvasott_bajtok;
+
+	for(int i=0; i<MAX_TITKOS-(p-titkos); i++){
+		titkos[p-titkos+i]='\0';
+	}
+
+	for(int ii='0';ii<='9';++ii)
+		for(int ji='0';ji<='9';++ji)
+			for(int ki='0';ki<='9';++ki)
+				for(int li='0';li<='9';++li)
+					for(int mi='0';mi<='9';++mi)
+						for(int ni='0';ni<='9';++ni)
+							for(int oi='0';oi<='9';++oi)
+								for(int pi='0';pi<='9';++pi){
+									kulcs[0]=ii;
+									kulcs[1]=ji;
+									kulcs[2]=ki;
+									kulcs[3]=li;
+									kulcs[4]=mi;
+									kulcs[5]=ni;
+									kulcs[6]=oi;
+									kulcs[7]=pi;
+
+									if(exor_tores(kulcs,KULCS_MERET,titkos,p-titkos))
+										printf(
+											"Kulcs: [%c%c%c%c%c%c%c%c]\nTiszta szöveg: [%s\n]",ii,ji,ki,li,mi,ni,oi,pi,titkos);
+
+									exor (kulcs,KULCS_MERET,titkos,p-titkos);
+								}
+									
+
+
+	return 0;
+}
+]]></programlisting>
+A mainben a szükséges tömböket deklaráljuk és egy szükséges segéd mutatót a "*p" alatt. Ezután egy while ciklus jön ami a beolvasásért felelős. A ciklusmag itt kicsit hosszabb mivel nem tudjuk hogy hány bitet kell beolvasni, hogy ne szaladjunk túl a BUFFER méretből. Egy sima if-el van megvalósítva hogyha kevesebb a beolvasott akkor ez ha több a beolvasott mint a BUFFER akkor az. Mivel a p-be olvasunk ezért a ciklusban mindig hozzáfűzzük a beolvasott biteket. A while ciklust követő for ciklus arra az esetre van hogyha lenne üres hely akkor azokat feltöltsük "0"-kal.
+
+Ami ezután jön az a fő törés mivel itt előállítjük az összes létező kulcs variánst, ezt nyolcs egymásba ágyazott for ciklussal érjük el. Azért nyolc mert a kulcs méret is nyolc. A ciklusok végén mindig lefuttatunk egy if-et ami ha tiszta szöveget ad nekünk akkor kiírjuk a hozzátartozó kulcsot és a kulccsal kapott tiszta szöveget. Hogy mi lehet tiszta szöveg arról majd később beszélek. Hogyha sikerült tiszta szöveget kapni az nem feltétlen a tiszta szöveg és mivel nem használunk segéd tömböt ezért kell a kiírás után megint XOR művelet végrehajtani az exor függvénnyel, ezzel gátolva meg azt hogy ne az egyszer tiszta szöveget próbáljuk meg újra visszafejteni a következő ciklusban.
+
+És akkor a maradék függvényekről pár szót:
+<programlisting language="c"><![CDATA[
+double atlagos_szohossz(const char titkos[],int titkos_meret){
+	int sz=0;
+	for (int i=0; i<titkos_meret;i++)
+		if(titkos[i] == ' ')
+			++sz;
+
+	return (double) titkos_meret / sz;
+}
+
+int tiszta_lehet(const char titkos[],int titkos_meret){
+
+	double szohossz = atlagos_szohossz(titkos,titkos_meret);
+
+	return szohossz < 9.0 && szohossz > 6.0 && 
+	strcasestr (titkos, "nem") && strcasestr (titkos, "hogy") && strcasestr (titkos, "az") &&strcasestr (titkos, "ha");
+
+}
+
+void exor (const char kulcs[], int kulcs_meret, char titkos[], int titkos_meret){
+	int kulcs_index=0;
+	for (int i=0;i<titkos_meret;++i){
+		titkos[i]=titkos[i]^kulcs[kulcs_index];
+		kulcs_index=(kulcs_index+1)%kulcs_meret;
+	}
+}
+int exor_tores(const char kulcs[], int kulcs_meret, char titkos[], int titkos_meret){
+
+	exor(kulcs, kulcs_meret, titkos, titkos_meret);
+
+	return tiszta_lehet (titkos,titkos_meret);
+
+}
+]]></programlisting>
+A függvények közül az exor_tores függvénnyel kezdem. Ennek négy paramétert adunk meg amik a XOR művelet végrehajtásához szükségesek, ebben a függvényben van másik két függvény. Az exor függvény végzi el a XOR műveletet, míg a tiszta_lehet függvény ellenőrzi ciklusonként hogy a kapott szöveg tiszta-e. Egy kapott szöveg akkor tiszta ha eleget tesz különböző kritériumoknak. Pl szerepeljen a szövegben a "nem", "hogy", "az" és a "hogy" szavak, hogy ezek a szavak szerepelnek-e a szövegben arra a strcasestr függvényt használjuk ami egyszerűen megkeresi a megadott szövegben a megadott szót. Azért ezek a szavak mert ezek nagyon gyakran fordulnak elő a szövegben azonban ha az eredeti szövegben nem szerepelnek ezek a szavak akkor semmi se fog megjelenni ezért figyelni kell hogy a bemeneti szövegben szerepeljenek. Másik kritérium az hogy a szavak átlagos hossza 6 és 9 között legyen, hogy ezt vizsgáljuk erre van az atlagos_szohossz függvény.
         </para>            
     </section>        
     <section>
@@ -86,13 +354,53 @@
             C++
         </para>
         <para>
-            Megoldás videó:
+            Megoldás videó:<link xlink:href="https://youtu.be/rfLaGXYM8_4">https://youtu.be/rfLaGXYM8_4</link>	
         </para>
         <para>
-            Megoldás forrása:                
+            Megoldás forrása: <link xlink:href="https://github.com/HernyakPisti/Prog1/tree/master/bhax/thematic_tutorials/bhax_textbook/caesar">https://github.com/HernyakPisti/Prog1/tree/master/bhax/thematic_tutorials/bhax_textbook/caesar</link>      
         </para>
         <para>
             Tanulságok, tapasztalatok, magyarázat...
+<programlisting language="c"><![CDATA[
+#include <iostream>
+#include "mlp.hpp"
+#include <png++/png.hpp>
+
+int main (int argc, char **argv)
+{
+    png::image <png::rgb_pixel> png_image (argv[1]);
+
+    int size = png_image.get_width() * png_image.get_height();
+    
+    Perceptron* p = new Perceptron (3, size, 256, 1);
+    
+    double* image = new double[size];
+    
+    for (int i = 0; i<png_image.get_width(); ++i)
+        for (int j = 0; j<png_image.get_height(); ++j)
+            image[i*png_image.get_width() + j] = png_image[i][j].red;
+    
+    double value = (*p) (image);
+    
+    std::cout << value << std::endl;
+    
+    delete p;
+    delete [] image;
+
+    return 0;    
+}
+]]></programlisting>
+A kódot a "cpp main.cpp -o main" paranccsal fordítsuk és a "./main mandel.png" paranccsal futtasuk. A mandel.png egy könyvtárban szerepel a main.cpp-vel
+
+A kód elején a szükséges include-ok szerepelnek, azonban a "mlp.hpp"-nek nem kacsacsőrökkel van körülzárva ebből azt tudjuk hogy a main.cpp-vel aktuális könyvtárban keresi a fordító.
+
+A main első sorában szerepel a png::image objektum amiben megadjuk hogy a png-nk milyen típusú és mivel a mandel.png rgb típusú ezért rgb_pixel paramétert adunk meg. Ezután megadunk egy nevet és utána hogy a png-t hol találja a program.
+Ezután kiszámoljuk a kép méretét egy egyszerű szorzással (magasság*szélesség).
+Ezután elkészítjük a Perceptron objektumot, aminek foglalunk memóríát. Ezután megadjuk a Perceptronnak hogy hány rétegű legyen ezután a réteg számnak megfelelően annyi paramétert adunk meg. Elsőnek a size-t mivel megadjuk az összes pixel ezután 256 és a végén egyet.
+Mivel a képet át kell alakítani egy double tömbbé ezért foglalunk annak is helyet. Ebbe fogjuk bemásolni a képet sor folytonosan.
+A for ciklus végzi el ezt a másolást. Azért van szükség másolásra mivel a Perceptron objektumnak double* kell átadni paraméternek. A cikluson belül pedig elkérjük a kép[i][j] elemének a vöröscsatornáját ciklusonként. Ezzel a kép vektorrá lett alakítva, ezután át kell adni a vektort a Perceptron-nak.
+A Perceptron majd egy double értékkel fog visszatérni ezért hozunk létre egy double típusú value változót. Ebbe a változóba mentsük el a Perceptron osztály függvényhívó operátorát használva.
+Ezután egyszerűen kiírjuk az értéket és felszabadítjuk a memóriát amit lefoglaltunk.
         </para>            
     </section>        
         
