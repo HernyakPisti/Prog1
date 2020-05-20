@@ -18,15 +18,15 @@
             Megoldás forrása:<link xlink:href="https://github.com/HernyakPisti/Prog1/tree/master/bhax/thematic_tutorials/bhax_textbook/turing">https://github.com/HernyakPisti/Prog1/tree/master/bhax/thematic_tutorials/bhax_textbook/turing</link>
         </para>
         <para>
-            Tanulságok, tapasztalatok, magyarázat...
+            Tanulságok, tapasztalatok, magyarázat...</para>
 	<programlisting language="c"><![CDATA[
 int main(){
 for (;;){}
 return 0;
 }
-}]]></programlisting>
+}]]></programlisting><para>
 Az alábbi kód egy magot fog futtatni 100%-on. A kód fordításához a "gcc inf-100.c -o 100" parancsot használjuk majd "./100" paranccsal futtatjuk. A futtatás alatt azt szeretnénk elérni hogy egy mag állandóan 100%-on fusson vagy ahhoz nagyon közel, hogy ezt leellenőrizzük nyissunk meg egy másik terminált és a "top" paranccsal figyeljük meg hogy mi történt.
-
+</para>
 <programlisting language="c"><![CDATA[
 #include <unistd.h>
 int main(){
@@ -35,8 +35,8 @@ int main(){
 	}
 return 0;
 }
-}]]></programlisting>
-Az alábbi kód egy magot fog 0%-on futtatni. A kód fordításához a "gcc inf-0.c -o 0" parancsot használjuk majd a "./0" paranccsal futtatjuk. A futtatás alatt azt szeretnénk elérni hogy egy map állandóan 0%-on fusson. Ha ezt szeretnénk leellenőrizni a "top" paranccsal akkor sajnos nem látunk semmi változást mivel sok más program fut így a mi programunk nem jelenik meg.
+}]]></programlisting><para>
+Az alábbi kód egy magot fog 0%-on futtatni. A kód fordításához a "gcc inf-0.c -o 0" parancsot használjuk majd a "./0" paranccsal futtatjuk. A futtatás alatt azt szeretnénk elérni hogy egy map állandóan 0%-on fusson. Ha ezt szeretnénk leellenőrizni a "top" paranccsal akkor sajnos nem látunk semmi változást mivel sok más program fut így a mi programunk nem jelenik meg.</para>
 <programlisting language="c"><![CDATA[
 #include <unistd.h>
 #include <omp.h>
@@ -47,9 +47,9 @@ int main(){
 	}
 	return 0;
 }
-}]]></programlisting>
+}]]></programlisting><para>
 Az utolsó kód a feladatban arra törekszik hogy minden magot 100%-on futtasson. A kód fordításához a "gcc inf-all.c -o all -fopenmp" parancsot kell használni. A futtatáshoz "./all" parancsot használjuk. A "-fopenmp" kapcsolót a "#pragma omp parallel" sor miatt használjuk ami ahhoz kell hogy az összes magot párhuzamosan tudjuk használni. Egy másik terminálban futtatott "top" paranccsel ellenőrizhetjük hogy a program minden szálat 100%-on futtat vagy ahhoz nagyon közel.
-
+</para><para>
 Minden kód alapja egy végtelen ciklus, mivel nem adjuk meg meddig fusson a kód ezért a ciklusunk végtelen. Erre két példát is használunk a "for(;;)" és a "while(1)". Mindkettő egy végtelen ciklus míg a while-lal írt könnyebben olvasható addig a for-ral írt egyszerűbb. 
  </para>            
     </section>        
@@ -183,12 +183,12 @@ int main(){
 }
 }]]></programlisting> 
 A kód fordításához a "gcc váltcsere.c -o csere" parancsot használjuk, a futtatáshoz pedig "./csere". Ha lefordítjuk és futtatjuk a kódot akkor hirtelen végig szalad a kód és nem tudjuk mitörtént csak cserélgetünk 2 számot.
-
+</para><para>
 A legelső cserélés egy egyszerű segéd változóval történik. Az az létrehozunk egy temp nevű változót, amibe eltároljuk az a-t majd az a-t egyenlővé tesszük b-vel és a végén b-t egyenlővé tesszük a temp-pel. Ez egy egyszerű változó csere amit elég könnyű végig követni, hátránya az hogy külön memória hely kell a temp változónak.
-
+</para><para>
 A második cserélés a matematikával történik meg. Egyszerű összeadás kivonás. A b-t egyenlővé tesszük b-a-val, a-t egyenlővé tesszük az a+b összeggel majd a b-t egyenlővé tesszük a-b-vel.
 Hogy tudjuk végigkövetni hol mennyi a változók értékének egyszerűen kikommentelve írjuk fel hogy mikor mennyi az értékük.
-
+</para><para>
 A harmadik cserélés az XOR opetárt használja. Az első sorban kombináljuk az a-t és a b-t a XOR segítségével ezzel megkapjuk az a+b-t és ezt letároljuk az a-ban. A második sorban az összeget XOR-ral kombináljuk b-vel amibel kiszürjük a b-t így megkapjuk az a-t és ezt letároljuk az b-ben. Mivel még az a-ban az összeg van letárolva így megint kombináljuk az összeget b-vel (az összeg még mindig a-ban van letárolva) így kiszürjük az eredeti a értéket mivel az eredeti a érték már b-ben van így megkapva az eredeti b-t amit letárolunk a-ba. Ezzel kész a csere. Innen látszik hogy a XOR jó mód információ tárolásra mivel bármikor eltudjuk tüntetni az XOR-t ha mégegyszer használjuk az XOR-t.
         </para>
     </section>                     
@@ -272,7 +272,7 @@ usleep(50000);
 }
 }]]></programlisting>
 A programot a "gcc pattogifnelkull.c -o pattog" paranccsal fordítjuk le, majd "./pattog" paranccsal futtatjuk. A kód összetettebb, mivel több függvény is szerepel benne.
-Kezdjük a main-nel:
+Kezdjük a main-nel:</para>
 <programlisting language="c"><![CDATA[
 int main(){
 
@@ -290,9 +290,9 @@ palya();
 mozdulj();
 usleep(50000); 
 }
-]]></programlisting> 
+]]></programlisting> <para>
 A main-ben két for ciklus van amik úgy néznek ki mint amik tömböket töltenek fel csupa 1-sel. A kód ezeket használja majd hogy meghatározza a labda helyzetét. A ciklusok utáni 4 sorban pedig a falakat látjuk ahol a labdának irányt kell változtatni ezért az ott lévő értékeket átírjuk -1-re. Ezután pedig jön egy végtelen ciklus amiben 2 új függvény szerepel a palya és a mozdulj, ezekről később lesz szó. Az usleep pedig egy egyszerű késleltetés arra hogy a labdának nyomon lehessen követni az útvonalát.
-Térjünk át a palya függvényre és az előtte lévő sorokra:
+Térjünk át a palya függvényre és az előtte lévő sorokra:</para>
 <programlisting language="c"><![CDATA[
 #include <stdio.h>
 #include <stdlib.h>
@@ -330,12 +330,12 @@ for (int i=0;i<(SZG+2);i++)
 	printf("X");
 	printf("\n");
 }
-]]></programlisting> 
+]]></programlisting> <para>
 A kód a szokásos include-okkal kezdődik. Ezután 4 változót vezetünk be, sz ami a szélességet jelenti ahonnan a labda indul majd, m ami a magasságot jelenti ahonnan a labda indul majd, valamint van a és b változó amik a labdairányát jelölik majd. Ezután két konstans következik az SZG és az MG ezek jelölik a pálya méretét. Ezután létrehozzuk a két tömböt amiket majd azt tároljuk hogy a labda falnál van-e vagy nem, erre 1 és -1 használjuk.
-
+</para><para>
 Ezután következik a palya függvény ami void típusú mivel nincs visszaadott értéke. A függvény egy "system("clear")" paranccsal indul ami letörli a terminált hogy a pálya jól látszódjon. Ezután több for ciklus is van amikkel a pályát rajzoljuk és utána a labdát majd megint a pályát. A kód úgy működik hogy a falakat "X"-ek jelölik. A falak közti terület pedig " " (egyszerű szóközök). A rajzolás pedig úgy történik hogy indulunk mindig az első sortól aztán addig írjuk az "X"-et meg a " "-ök amíg nem kell a labdát leírni. Aztán leírjuk a labdát ami "X" karakter jelöl. Majd ezután befejzzük a pályát.
-
-A kód utolsó része pedig a mozdulj függvény:
+</para><para>
+A kód utolsó része pedig a mozdulj függvény:</para>
 <programlisting language="c"><![CDATA[
 void mozdulj(){
 sz=sz+a; 
@@ -343,7 +343,7 @@ m=m+b;
 a=a*falsz[sz]; 
 b=b*falm[m]; /
 }
-]]></programlisting>
+]]></programlisting><para>
 Ez a függvény is void típusú mivel nincs visszatérő értéke. Ebben a függvényben használjuk az első 4 változót amit bevezettünk. Ezek fogják megszabni hogy a labda milyen X,Y koordinátál áll és milyen irányba kell haladnia. A "sz=sz+a" és "m=m+b" jelenti a koordinátát, az "a=a*falsz[sz]" és a "b=falm[m]" pedig az irányt. Az a és a b értéke vagy 1 vagy -1 ha egy akkor pozitív irányba halad a labda ha -1 akkor negatív irányba.
         </para>
     </section>                     
@@ -362,34 +362,8 @@ Ez a függvény is void típusú mivel nincs visszatérő értéke. Ebben a füg
         </para>
         <para>
             Tanulságok, tapasztalatok, magyarázat... 
+        </para>
 <programlisting language="c"><![CDATA[
-// BHAX BogoMIPS
-// Copyright (C) 2019
-// Norbert Batfai, batfai.norbert@inf.unideb.hu
-//
-//  This program is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published by
-//  the Free Software Foundation, either version 3 of the License, or
-//  (at your option) any later version.
-//
-//  This program is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//  GNU General Public License for more details.
-//
-//  You should have received a copy of the GNU General Public License
-//  along with this program.  If not, see <https://www.gnu.org/licenses/>.
-//
-// Version history
-//
-// This program is based on 
-// 
-// - Linus Torvalds's original code (https://mirrors.edge.kernel.org/pub/linux/kernel/v1.0/linux-1.0.tar.gz init/main.c)
-// - and Jeff Tranter's standalone version (archive.debian.org/debian/pool/main/s/sysutils/sysutils_1.3.8.5.1.tar.gz). 
-//
-// See also UDPROG
-//
-
 #include <time.h>
 #include <stdio.h>
 
@@ -428,18 +402,18 @@ main (void)
   printf ("failed\n");
   return -1;
 }
-]]></programlisting>
+]]></programlisting><para>
 Az alábbi kód Bátfai Norbert-től van egy az egyben.
-
+</para><para>
 A kód fordításához a "gcc bogomips.c -o bogo" parancsot használjuk a futtatáshoz pedig a "./bogo" parancsot.
-
-A kód arra való hogy megállalítsa a számítógép bogomips értékét, ami úgy írható le hogy milyen erős is az adott számítógép, de nekünk nem is ez a fontos hanem a main függvényben lévő while ciklus fejben.
+</para><para>
+A kód arra való hogy megállalítsa a számítógép bogomips értékét, ami úgy írható le hogy milyen erős is az adott számítógép, de nekünk nem is ez a fontos hanem a main függvényben lévő while ciklus fejben.</para>
 <programlisting language="c"><![CDATA[
   while ((loops_per_sec <<= 1))
-]]></programlisting>
-Erről a while ciklusról van szó amiben van egy bit shiftelő operátor mégpedig a  <programlisting language="c"><![CDATA[<<=]]></programlisting>" ami csak annyit tesz hogy az int-ben tárolt számot bitenként lépteti. Másszóval mindig a 2 hatványát adja meg.
-
-Ezt a while ciklus fejet használjuk arra is hogy megtudjuk a bit hosszát:
+]]></programlisting><para>
+Erről a while ciklusról van szó amiben van egy bit shiftelő operátor van ami csak annyit tesz hogy az int-ben tárolt számot bitenként lépteti. Másszóval mindig a 2 hatványát adja meg.
+</para><para>
+Ezt a while ciklus fejet használjuk arra is hogy megtudjuk a bit hosszát:</para>
 <programlisting language="c"><![CDATA[
 #include <stdio.h>
 int main(){
@@ -452,9 +426,9 @@ int main(){
 	}
 printf("Szóhossz: %d bit\n",db);
 return 0;
-}]]></programlisting>
+}]]></programlisting><para>
 A kódot a "gcc szohosz.c -o szo" paranccsal fordítjuk majd a "./szo" paranccsal futtatjuk.
-
+</para><para>
 A kód egy egyszerű main függvényből áll amiben egyből deklaráunk 2 változóz a db és a szo változót. A db fogja jelölni hogy hányszor futt le a lentebb lévő while ciklus a szo pedig egy egyszerű int amit a while ciklus fejben használunk amiben léptetjük a bitet. A ciklus lefutása után pedig kiírjuk a db változó értékét, ami 32 lesz, ezzel megtudva azt hogy a bit hossza a számítógépen 32 bit.
         </para>
     </section>                     
@@ -473,6 +447,7 @@ A kód egy egyszerű main függvényből áll amiben egyből deklaráunk 2 vált
         </para>
         <para>
             Tanulságok, tapasztalatok, magyarázat...
+        </para>
 <programlisting language="c"><![CDATA[
 #include <stdio.h>
 #include <math.h>
@@ -522,12 +497,12 @@ int main(){
     kiir(PR,4);
     return 0;
 }
-]]></programlisting>
+]]></programlisting><para>
 A kódot a "gcc pagerank.c -o page -lm" paranccsal fordítjuk és a "./page" paranccsal futtatjuk. A -lm kapcsoló az sqrt függvény miatt kell.
-
+</para><para>
 A program feladata hogy egy 4 honlapból álló hálózatra kiszámolja az adott 4 lap PageRank értékét. A PageRank még a Google alapítói is használták kezdetben. Az elgondolás az az volt hogy annál jobb egy honlap ha arra minnél több jó értékelésű honlap mutat.
-
-A kód itt is több függvényből áll ezért kezdjük megint a main-nel:
+</para><para>
+A kód itt is több függvényből áll ezért kezdjük megint a main-nel:</para>
 <programlisting language="c"><![CDATA[
 int main(){
     
@@ -560,9 +535,14 @@ int main(){
     return 0;
 }
 ]]></programlisting>
-A mainben létrehozunk egy double típusú link mátrixot L néven. Ezután még másik 2 double típusú tömböt hozunk létre PRv és PR néven. Az eddigi adatok mind a feladatból lettek kinézve. Ezután deklarálunk 2 változót i és j-t amiket majd ciklusokban használunk. Ezután jön egy többszörösen összetett for ciklus sorozat. Az első for ciklus egy egyszerű végtelen ciklus, mivel a PageRanket nem elég egyszer kiszámolni hanem többször kell. A második for ciklus gyorsan feltöltjük 0.0-val a PR tömbböt mivel mindig üres tömb kell a számoláshoz és pár sorral lentebb a PR tömböt feltöltjük más számokkal amiket mindig le kell nullázni ezért kell mindig újra nullázni. A harmadik for ciklusban történik egy egyszerű mátrix szorzás. Amit a végtelen ciklusból való kilépésért felelős if követ. Az if azt vizsgálja hogy a tavolsag függvény visszaadott értéke elég kicsi-e ahhoz hogy kilépjen-e a végtelen ciklusból ha igen akkor áttér a kiir függvényre és véget ér a program de ha nem akkor jön a negyedik for ciklus amia PRv-be másolja a PR értékeit, majd kezdődik az egész ciklus újra.
-
+<para>
+A mainben létrehozunk egy double típusú link mátrixot L néven. Ezután még másik 2 double típusú tömböt hozunk létre PRv és PR néven. Az eddigi adatok mind a feladatból lettek kinézve. Ezután deklarálunk 2 változót i és j-t amiket majd ciklusokban használunk. Ezután jön egy többszörösen összetett for ciklus sorozat. Az első for ciklus egy egyszerű végtelen ciklus, mivel a PageRanket nem elég egyszer kiszámolni hanem többször kell.
+</para><para>
+A második for ciklus gyorsan feltöltjük 0.0-val a PR tömbböt mivel mindig üres tömb kell a számoláshoz és pár sorral lentebb a PR tömböt feltöltjük más számokkal amiket mindig le kell nullázni ezért kell mindig újra nullázni.
+</para><para>A harmadik for ciklusban történik egy egyszerű mátrix szorzás. Amit a végtelen ciklusból való kilépésért felelős if követ. Az if azt vizsgálja hogy a tavolsag függvény visszaadott értéke elég kicsi-e ahhoz hogy kilépjen-e a végtelen ciklusból ha igen akkor áttér a kiir függvényre és véget ér a program de ha nem akkor jön a negyedik for ciklus amia PRv-be másolja a PR értékeit, majd kezdődik az egész ciklus újra.
+</para><para>
 Nézzük meg a két függvényt is:
+</para>
 <programlisting language="c"><![CDATA[
 #include <stdio.h>
 #include <math.h>
@@ -582,8 +562,9 @@ double tavolsag(double PR[], double PRv[], int db){
     return sqrt(osszeg);
 }
 ]]></programlisting>
+<para>
 A kód elején egy új include van a math.h. Ez az sqrt függvény miatt szükséges. Az első függvény ami szerepel az a kiír. Ez egy void típusú függvény mivel nincs visszatérési értéke, csak arra szolgál hogyha a végtelen ciklusból kiléptünk akkor a végső értékeket kiírja egy printf-el
-
+</para><para>
 A második függvény egy double típusú mivel a visszatérése egy sqrt függvényből jön. Ezzel a függvénnyel vizsgáljuk azt hogy a PageRankek között elég kicsi-e már az eltérés mert ha elég kicsi lesz akkor már nem kell tovább számolni és megkaptuk a végső PageRank értékeket.
         </para>
     </section>

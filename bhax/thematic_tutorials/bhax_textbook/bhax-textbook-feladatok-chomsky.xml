@@ -97,7 +97,7 @@ A kód fordításához használjuk elsőnek a "gcc version.c -o version -std=c99
             Megoldás forrása:  <link xlink:href="https://github.com/HernyakPisti/Prog1/tree/master/bhax/thematic_tutorials/bhax_textbook/chomsky">https://github.com/HernyakPisti/Prog1/tree/master/bhax/thematic_tutorials/bhax_textbook/chomsky</link>
         </para>
         <para>
-            Tanulságok, tapasztalatok, magyarázat... 
+            Tanulságok, tapasztalatok, magyarázat... </para>
 <programlisting language="c"><![CDATA[
 %{
 #include <stdio.h>
@@ -115,13 +115,13 @@ printf("Number of real numbers: %d\n", realnum);
 return 0;
 }
 ]]></programlisting>
-
+<para>
 Ez az első kódunk ami .l végződésű tehát ezt máshogy kell fordítanunk mint az eddigieket. Elsőnek is térjünk ki hogy mit takar .l végződés. A .l végződésből tudjuk hogy egy lex fáljról beszélünk amit úgy lehetne körülírni hogy adunk meg neki különböző kritériumokat és azok alapján készít nekünk egy teljesen új kódot ami a megadott kritériumok alapján dolgozok. Ezek a kritériumok közül az elsőben szerepelnek a .c részek pl include-ok, struktúrák/tömbök/változók deklarálása.. Ezt választja el az úgy nevezett szabályrendszertől "%%" jelölés.
-
+</para><para>
 Ezután adjuk meg a szabályrendszert. Itt a szabályrendszerben egy sor van ami fontosabb: "{digit}*(\.{digit}+)?" Ebben a sorban írjuk le a lexernek hogy milyen alakú a valós szám. A digit jelölés pár sorral fentebb van kifejtve ami csak annyit tesz hogy digit [0-9] azaz a digit egy 0-tól 9-ig lévő bármilyen szám lehet. A * azt jelöli hogy bármennyi lehet de legalább egy kell hogy legyen. Ezután a "\." rész csak egyszerűen a pontot jelöli a \ jel védi le a pontot hogy azt .-nak olvassa a lexer. ami ezután jön pedig a valósz szám utolsó része a tizedes számok. Ezek is 0-9 tartományból lehetnek számok és a "+" jelöli azt hogy ebből több is lehet.
-
+</para><para>
 Ezután jön a lexer utolsó része ahol egyszerűen leírjuk a maint amiben a "yylex()" sor indítja el a lexer függvényt, az utána lévő sorok meg már ismerősek egyszerű kiírás és visszatérés 0-val ha minden sikerült.
-
+</para><para>
 Most hogy tudjuk mi az a lexer fordítsuk és futtassuk. Elsőnek kell a .l forrásból kell készíteni egy .c forrást. Ezt a "-lex real.l" paranccsal tesszük meg. Ezután az aktuális könyvtárba elkészül nekünk a .c forrás. Ezt a "gcc lex.yy.c -lfl" paranccsal fordítsuk és ezután a "./a.out" paranccsal futtassuk. Az -lfl kapcsoló a lexer miatt szükséges.
         </para>
     </section>                     
@@ -139,7 +139,7 @@ Most hogy tudjuk mi az a lexer fordítsuk és futtassuk. Elsőnek kell a .l forr
         </para>
         <para>
             Tanulságok, tapasztalatok, magyarázat...
-
+        </para>
 <programlisting language="c"><![CDATA[
 %{
 #include <stdio.h>
@@ -216,13 +216,13 @@ yylex();
 return 0;
 } 
 ]]></programlisting>
-
+<para>
 Ebben a feladatban is egy lexert kell használni. Itt is ugyan az a felállás mint az előző feladatban. Készítünk egy .l forrást ami készít nekünk egy .c forrást azokkal a kritériumokkal amikkel mi készítettük el a .l forrást.
-
+</para><para>
 Ebben a kódban is az első részben különböző include-ok szerepelnek, konstans/tömb/stuktúra definiálás.
 Ezután jön megint a szabályrendszer. A szabályrendszernek az az elve ha talál a leetdict nevű tömbből egy megeggyező elemet a bementről akkor azt kicseréli az azonos sorban lévő másik karakter(ekkel), és miután egyezés van akkor ki is lépünk a ciklusból hogy ne menjünk tovább hiszen egy karaktert csak egyszer kell kicserélni.
 A szabályrendszer után pedig jön a main, ebben is meghívjuk a lexert a "yylex()" sorral a "srand" függvény pedig a random szám miatt kell, mivel random hogy a megtalált karaktert mire cseréljük ki.
-
+</para><para>
 Most hogy tudjuk hogy működik a forrás fordítsuk futtassuk. Ezt a "lex leet.l" paranccsal tesszük ez elkészíti nekünk a .c forrást. Ezt a "gcc lex.yy.c -lfl" paranccsal fordítsuk és az "./a.out" paranccsal futtassuk. A "-lfl" kapcsoló itt is a lexer miatt szükséges.
         </para>
     </section>                     
@@ -295,7 +295,9 @@ történik.</para>
 
         <para>
             Tanulságok, tapasztalatok, magyarázat...
+            </para><para>
 Ebben a feladatban több különböző forráskódot használtunk. Volt köztük ami warningot okozott míg volt ami nem. A warningok pontosabb megértéséhez használjuk a "splint" parancsot.
+</para><para>
 A forrást pedig a "gcc splint.c -o splint" paranccsal fordítsuk és a "./splint" paranccsal futtassuk ami nekünk egy csomó különböző számot ír ki, de itt most nem ez a lényeg, hanem a "splint splint.c" parancs eredménye. A parancs után megjelenik a terminálban különböző warningok amiket jobban kifejtve olvashatunk el.
          </para>
 
@@ -413,6 +415,7 @@ $(\exists y \forall x (y<x) \supset \neg (x \text{ prím}))$
         </para>
         <para>
             Tanulságok, tapasztalatok, magyarázat...
+        </para>
 <programlisting language="c"><![CDATA[
 #include <stdio.h>
 
@@ -431,7 +434,7 @@ int (*egesz (int c3)) (int c1, int c2);//egészet visszaadó és két egészet k
 int (*(*egeszre) (int f3)) (int f1, int f2); //függvénymutató egy egészet visszaadó és két egészet kapó függvényre mutató mutatót visszaadó, egészet kapó függvényre
 return 0;
 }
-]]></programlisting>
+]]></programlisting><para>
 A programot a "gcc deklaracio.c -o dekl" paranccsal fordítsuk és a "./dekl" paranccsal futtasuk. A terminálba nem fog semmi megjelenni mivel csak lefordul a kód a benne lévő kód sorokat egy egyszerű "cat deklaracio.c" paranccsal tekinthetjük meg.
         </para>
     </section>                     
