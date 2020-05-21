@@ -1,0 +1,5 @@
+Le szeretnénk másolni a fát elsőnek, hozzunk létre még egy példányt binfa2 néven amivel a binfa-t másoljuk, ellenörzés képp írjuk is ki.
+
+Hogy ezt megtegyük a másoló és a másoló érték adás konstruktórra van szükségünk ami a privát részben levan védve amit onnan emiatt kihozunk. A másoláshoz az eredetit adjuk paraméternek, ahol egy másoló függvényt ell használni aminez kelleni fog az eredetinek a gyökér és a fa mutatója
+A másooló érték adásnál pedig létrehozunk egy lokális Binfát temp néven amit a másoló konstruktórra bizzuk rá majd a swappet használva megcserlése a tempet az eredetivel ehhez viszont kell majd a mozgatás is
+Helyeztünk el nyomkövetést is ezért vannak új kiírások az előző kódhoz hasonlóan
