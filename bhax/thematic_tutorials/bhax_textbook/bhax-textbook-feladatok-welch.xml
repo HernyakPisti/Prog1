@@ -14,14 +14,102 @@
             nincs eltéve kiszámolt szám.
         </para>
         <para>
-            Megoldás videó:
+            Megoldás videó: <link xlink:href="https://youtu.be/qe12vdwuYYk">https://youtu.be/qe12vdwuYYk</link>
         </para>
         <para>
-            Megoldás forrása:                
+            Megoldás forrása: <link xlink:href="https://github.com/HernyakPisti/Prog1/tree/master/bhax/thematic_tutorials/bhax_textbook/welch">https://github.com/HernyakPisti/Prog1/tree/master/bhax/thematic_tutorials/bhax_textbook/welch</link>
         </para>
         <para>
             Tanulságok, tapasztalatok, magyarázat... térj ki arra is, hogy a JDK forrásaiban a Sun programozói
-            pont úgy csinálták meg ahogyan te is, azaz az OO nemhogy nem nehéz, hanem éppen természetes neked!
+            pont úgy csinálták meg ahogyan te is, azaz az OO nemhogy nem nehéz, hanem éppen természetes neked!</para>
+<para>
+ A kód fordításához használjuk a "g++ polargen.cpp polargenteszt.cpp -o polargen" parancsot majd a futtatáshoz "./polargen". 
+</para>
+ <para>
+  Ebben a feladatban egy saját osztályt próbálunk ki random számok generálására. Ehhez a polargen.cpp és polargenteszt.cpp kódokat használjuk és a polargen.h headert
+</para>
+<para> Kezdjük az értelmezést a polargenteszt.cpp-vel.
+    <programlisting language="c"><![CDATA[
+        #include <iostream>
+#include "polargen.h"
+
+int
+main (int argc, char **argv)
+{
+  PolarGen pg;
+
+  for (int i = 0; i < 10; ++i)
+    std::cout << pg.kovetkezo () << std::endl;
+
+  return 0;
+}]]></programlisting>
+Egy egyszerűbb kódról van itt szó. A main első sorában készítünk egy PolarGen típust, amit aztán egy for ciklusban fogunk meghívni 10-el. A ciklusban mindig meghívjuk a kovetkezo tagfüggvényt amivel majd a random számokat generálni fogjuk, és azokat írjuk ki mindig.</para>
+<para> Térjünk át a polargen.h fájlra.
+<programlisting language="c"><![CDATA[
+    #ifndef POLARGEN__H
+#define POLARGEN__H
+
+#include <cstdlib>
+#include <cmath>
+#include <ctime>
+
+class PolarGen
+{
+public:
+  PolarGen ()
+  {
+    nincsTarolt = true; //konsrutkor igazra inicalizál
+    std::srand (std::time (NULL)); //inicaizál egy random számot
+  }
+   ~PolarGen ()
+  {
+  }
+  double kovetkezo ();
+
+private:
+  bool nincsTarolt;
+  double tarolt;
+
+};
+
+#endif
+]]></programlisting>
+Ez itt maga az osztály, az osztály elején szerepel egy konstruktor ami egy logikai tagot inicializál igazra és után egy másik egy random számot. Ezek után pedig meghívásra kerül a kovetkezo függvény amiben a random szám generálás fog történni.</para>
+<para>Nézzük meg az utolsó fájlt a polargen.cpp-t
+    <programlisting language="c"><![CDATA[
+#include "polargen.h"
+
+double
+PolarGen::kovetkezo ()
+{
+  if (nincsTarolt)
+    {
+      double u1, u2, v1, v2, w;
+      do
+    {
+      u1 = std::rand () / (RAND_MAX + 1.0);
+      u2 = std::rand () / (RAND_MAX + 1.0);
+      v1 = 2 * u1 - 1;
+      v2 = 2 * u2 - 1;
+      w = v1 * v1 + v2 * v2;
+    }
+      while (w > 1);
+
+      double r = std::sqrt ((-2 * std::log (w)) / w);
+
+      tarolt = r * v2;
+      nincsTarolt = !nincsTarolt;
+
+      return r * v1;
+    }
+  else
+    {
+      nincsTarolt = !nincsTarolt;
+      return tarolt;
+    }
+}    ]]></programlisting>
+Ebben a kód részletben szerepel a kovetkezo függvény aminek a visszatérési értéke lesz mindig az a random szám amit kifogunk írni.</para><para>
+A kód elején egy if szerepel ami annyit tesz hogy leellenőrzi hogy vannak-e már tárolt számok és ha nincsenek akkor készít.
         </para>                
     </section>        
 
@@ -31,10 +119,154 @@
             Valósítsd meg C-ben az LZW algoritmus fa-építését!
         </para>
         <para>
-            Megoldás videó:
+            Megoldás videó: <link xlink:href="https://youtu.be/qe12vdwuYYk">https://youtu.be/qe12vdwuYYk</link>
         </para>
         <para>
-            Megoldás forrása:                
+            Megoldás forrása:<link xlink:href="https://github.com/HernyakPisti/Prog1/tree/master/bhax/thematic_tutorials/bhax_textbook/welch">https://github.com/HernyakPisti/Prog1/tree/master/bhax/thematic_tutorials/bhax_textbook/welch</link>          
+        </para>
+        <para> Tanulságok, tapasztalatok, magyarázat... </para>
+       <para>A feladatban használt kód Bátfai Nortbert-től származik</para>
+        <para>
+            A kód fordításához használjuk a "gcc z.c -lm -o z" parancsot, az lm kapcsoló a math.h header miatt szükséges mivel a kódban használjuk az sqrt függvényt, a futtatáshoz pedig a "./z bemenetifájl kimeneti fájl".
+        </para>
+        <para>
+            Mivel a kód hosszabb terjedelmű ezért több részre bontva értelmezzük. Kezdjük a kód elejével.
+            <programlisting language="c"><![CDATA[
+                typedef struct binfa
+{
+  int ertek;
+  struct binfa *bal_nulla;
+  struct binfa *jobb_egy;
+
+} BINFA, *BINFA_PTR;
+
+BINFA_PTR
+uj_elem ()
+{
+  BINFA_PTR p;
+
+  if ((p = (BINFA_PTR) malloc (sizeof (BINFA))) == NULL)
+    {
+      perror ("memoria");
+      exit (EXIT_FAILURE);
+    }
+  return p;
+}
+
+extern void kiir (BINFA_PTR elem);
+extern void ratlag (BINFA_PTR elem);
+extern void rszoras (BINFA_PTR elem);
+extern void szabadit (BINFA_PTR elem);
+]]></programlisting> Az include-ok után szerepel egy önhivatkozó struktúra aminek a fontosabb szerepe a mellékágakra való mutatók állítása, ezután egy hibakezelés következik ami annyit tesz hogyha nem tudunk a "p" változónak elég memóriét foglalni a szabad tárban akkor írjon ki egy hiba üzenetet vagy adja vissza a "p"-t, ezután pedig több függvényt hozunk létre amik majd a fa adait írják ki vagy a fa kiírását végzik, az utolsó föüggvény pedig majd a lefoglalt memóriát szabadítja fel.
+        </para>
+<para>
+    Ezután nézzük a main függvény elejét.
+</para>
+        <para>
+            <programlisting language="c"><![CDATA[
+                int
+main (int argc, char **argv)
+{
+  char b;
+
+  BINFA_PTR gyoker = uj_elem ();
+  gyoker->ertek = '/';
+  gyoker->bal_nulla = gyoker->jobb_egy = NULL;
+  BINFA_PTR fa = gyoker;
+
+  while (read (0, (void *) &b, 1))
+    {
+      if (b == '0')
+  {
+    if (fa->bal_nulla == NULL)
+      {
+        fa->bal_nulla = uj_elem ();
+        fa->bal_nulla->ertek = 0;
+        fa->bal_nulla->bal_nulla = fa->bal_nulla->jobb_egy = NULL;
+        fa = gyoker;
+      }
+    else
+      {
+        fa = fa->bal_nulla;
+      }
+  }
+      else
+  {
+    if (fa->jobb_egy == NULL)
+      {
+        fa->jobb_egy = uj_elem ();
+        fa->jobb_egy->ertek = 1;
+        fa->jobb_egy->bal_nulla = fa->jobb_egy->jobb_egy = NULL;
+        fa = gyoker;
+      }
+    else
+      {
+        fa = fa->jobb_egy;
+      }
+  }
+    }]]></programlisting>
+     A main elején létrehozunk egy "b" nevű char típusú változót amivel majd a bemenetet fogjuk vizsgálni, Ezután létrehozzuk a gyökér elemet aminek mind két ágát ki NULL-ozzuk és létrehozunk egy mutatót ami a gyökérre mutat. Ezután következik a beolvasás egy while ciklussal. Hogyha '0'-ás karakter jön akkor megnézzük hogy létezik-e már gyermek ezen az ágon aminek az értéke NULL és ha igen akkor itt is létrehozunk egy csomópont két mellékággal amiknek ugyan úgy NULL értéket adunk, de ha már létezik 0-ás gyermek és értéke is van akkor a fa mutatót ráállítjuk arra a csomopontra és beolvassuk a következő értéket. Ez történik akkor is ha '1'-es érték jön a bemeneten. Amint olyan pontra érkezünk ahol nincs két mellék ág ott létrehozunk két mellég ágat azoknak az értéküket NULL-ra állítjuk és a fa mutatót visszaállítjuk a gyökérre.
+        </para><para>
+            Nézzük meg a main második felét.
+        </para>
+        <para>
+            <programlisting language="c"><![CDATA[
+                printf ("\n");
+  kiir (gyoker);
+  
+  extern int max_melyseg, atlagosszeg, melyseg, atlagdb;
+  extern double szorasosszeg, atlag;
+
+printf ("melyseg=%d\n", max_melyseg-1);
+
+  atlagosszeg = 0;
+  melyseg = 0;
+  atlagdb = 0;
+  ratlag (gyoker);
+
+  atlag = ((double)atlagosszeg) / atlagdb;
+
+  atlagosszeg = 0;
+  melyseg = 0;
+  atlagdb = 0;
+  szorasosszeg = 0.0;
+
+  rszoras (gyoker);
+
+  double szoras = 0.0;
+
+  if (atlagdb - 1 > 0)
+    szoras = sqrt( szorasosszeg / (atlagdb - 1));
+  else
+    szoras = sqrt (szorasosszeg);
+
+  printf ("atlag=%f\nszoras=%f\n", atlag, szoras);
+
+  szabadit (gyoker);
+}]]></programlisting>
+Elméletben eddigre már felvan építve a fánk, márcsak kikell írnunk, és az adatait kell kiszámolnunk, erre hozunk létre több változót is, amiknek ezután értékeket adunk a megfelelő számítások elvégézése után. A main utolsó soraiban szereplő "szabadit" függvény fogja felszabadítani a lefoglalt memóriát. A kód további sorai pedig főleg különböző számításokat tartalmaznak, azonban a "kiir" függvényről érdemes még pár szót ejteni.
+<programlisting language="c"><![CDATA[void
+kiir (BINFA_PTR elem)
+{
+  if (elem != NULL)
+    {
+      ++melyseg;
+
+      if (melyseg > max_melyseg)
+        max_melyseg = melyseg;
+      
+      kiir (elem->jobb_egy);
+
+      for (int i = 0; i < melyseg; ++i)
+          printf ("---");
+      printf ("%c(%d)\n", elem->ertek < 2 ? '0' + elem->ertek : elem->ertek, melyseg-1);
+
+      kiir (elem->bal_nulla);
+
+      --melyseg;
+    }
+}]]></programlisting>
+Ez a függvény végzi el a fa kirajzolását. Mivel csak akkor kell kiírni egy elemet ha annak nem NULL az értéke ezért a függvény egyből ezt vizsgálja és ha az érték mégis NULL akkor át is ugorjuk az egész függvényt. Azonban ha az elem értéke más mint NULL akkor elsőnek megnöveljük a mélységet mivel minden elem mellé ()-be melléírjük hogy melyik magassági szinten vagyunk most, és mindig vizsgáljuk hogy ez a mélység-e esetleg az eddigi legnagyobb. Ezután pedig inorder sorban kiírjuk a fa elemeit. Miután kiírtuk az elemet csökkentsük a mélységet.
         </para>
     </section>        
         
@@ -44,11 +276,108 @@
             Járd be az előző (inorder bejárású) fát pre- és posztorder is!
         </para>
         <para>
-            Megoldás videó:
+            Megoldás videó: <link xlink:href="https://youtu.be/qe12vdwuYYk">https://youtu.be/qe12vdwuYYk</link>
         </para>
         <para>
-            Megoldás forrása:                
-        </para>
+            Megoldás forrása:     <link xlink:href="https://github.com/HernyakPisti/Prog1/tree/master/bhax/thematic_tutorials/bhax_textbook/welch">https://github.com/HernyakPisti/Prog1/tree/master/bhax/thematic_tutorials/bhax_textbook/welch</link>
+        </para><para> Tanulságok, tapasztalatok, magyarázat... </para>
+        <para>
+            A kód bemutásához egy kisebb bemeneti fáljt használunk hogy lássuk a fát egyben.
+        </para><para>A feladat elvégézéhez csak egy kicsit kell a forrás kódunkat megváltoztatni, de elsőnek nézzük meg hogy milyenek a bejárások.
+    </para><para>3 bejárás van, az előző feladatban az inordert néztük meg ami azt jelenti hogy elsőnek az egyik részfát járjuk be aztán a csomópontot majd a másik részfát, ennél a bejárásnál a kiírásnál a gyökér középtájon lesz.
+    <mediaobject>
+                <imageobject>
+                    <imagedata fileref="welch/inorder.png" scale="50" />
+                </imageobject>
+            </mediaobject>
+            Ahhot hogy ilyen fát kapjuk csak a "kiir" függvényben kell pár sor felcserélni, de mivel alapból inorder volt az első feladatban a bejárás ezért itt még a függvényünk változatltan
+            <programlisting language="c"><![CDATA[
+                void
+kiir (BINFA_PTR elem)
+{
+  if (elem != NULL)
+    {
+      ++melyseg;
+
+      if (melyseg > max_melyseg)
+        max_melyseg = melyseg;
+      
+      
+      kiir (elem->bal_nulla);
+      
+      for (int i = 0; i < melyseg; ++i)
+          printf ("---");
+      printf ("%c(%d)\n", elem->ertek < 2 ? '0' + elem->ertek : elem->ertek, melyseg-1);
+
+      kiir (elem->jobb_egy);
+
+      --melyseg;
+    }
+}
+]]></programlisting>Itt látható az előző feladatból egy az egyben a "kiir" függvény, a fontosabb sorok a feladat szempontjából a for ciklus és a két kiir (elem->bal_nulla)/kiir (elem->jobb_egy) sor. Ezek a sorok határozzák meg a kiírást, hogy más bejárást érjünk el csak ezeket a sorokat fogjuk cserélgetni.
+</para><para>Akkor most jöjjön a preorder bejárás. Ennél a bejárásnál elsőnek a csomópontot írjuk ki majd a két részfát, a kiírásnál emiatt a gyökér legfelül lesz.
+<mediaobject>
+                <imageobject>
+                    <imagedata fileref="welch/preorder.png" scale="50" />
+                </imageobject>
+            </mediaobject>
+            Hogy ilyen fát kapjunk a "kiir" függvényt a következő képpen kell átírni: 
+            <programlisting language="c"><![CDATA[
+void
+kiir (BINFA_PTR elem)
+{
+  if (elem != NULL)
+    {
+      ++melyseg;
+
+      if (melyseg > max_melyseg)
+        max_melyseg = melyseg;
+      
+      for (int i = 0; i < melyseg; ++i)
+          printf ("---");
+      printf ("%c(%d)\n", elem->ertek < 2 ? '0' + elem->ertek : elem->ertek, melyseg-1);
+      
+      kiir (elem->bal_nulla);
+      
+      
+      kiir (elem->jobb_egy);
+
+      --melyseg;
+    }
+}
+                ]]></programlisting> Tehát itt a részfák kirajzolását utolsónak írjuk így érjük el a preorder bejárást.</para><para>
+                És akkor nézzük az utolsó bejárást, a postorder bejárást. Ennél a bejárásnál elsőnek a két részfát írjuk ki majd végül a gyökeret, ezért a gyökér itt legalul lesz.
+                <mediaobject>
+                <imageobject>
+                    <imagedata fileref="welch/postorder.png" scale="50" />
+                </imageobject>
+            </mediaobject>Hogy ilyen fát kapjunk a "kiir" függvényt a következő képpen kell átírni: 
+<programlisting language="c"><![CDATA[
+void
+kiir (BINFA_PTR elem)
+{
+  if (elem != NULL)
+    {
+      ++melyseg;
+
+      if (melyseg > max_melyseg)
+        max_melyseg = melyseg;
+      
+      kiir (elem->jobb_egy);
+
+      kiir (elem->bal_nulla);
+      
+      for (int i = 0; i < melyseg; ++i)
+          printf ("---");
+      printf ("%c(%d)\n", elem->ertek < 2 ? '0' + elem->ertek : elem->ertek, melyseg-1);
+
+      
+
+      --melyseg;
+    }
+}
+    ]]></programlisting> Tehát itt a részfák kirajzolását tesszük meg elsőnek ezzel érve el a postorder bejárást és a gyökér így legalulra kerül a kiírás során.
+</para>
     </section>        
                         
     <section>
@@ -58,11 +387,146 @@
             osztálya. A gyökér csomópont legyen kompozícióban a fával!
         </para>
         <para>
-            Megoldás videó:
+            Megoldás videó: <link xlink:href="https://youtu.be/qe12vdwuYYk">https://youtu.be/qe12vdwuYYk</link>
         </para>
         <para>
-            Megoldás forrása:                
+            Megoldás forrása:       <link xlink:href="https://github.com/HernyakPisti/Prog1/tree/master/bhax/thematic_tutorials/bhax_textbook/welch">https://github.com/HernyakPisti/Prog1/tree/master/bhax/thematic_tutorials/bhax_textbook/welch</link>
+        </para><para> Tanulságok, tapasztalatok, magyarázat... </para>
+        <para>A feladat megoldásához használt kód Bátfai Norbert-től van.</para>
+        <para>
+            A kód fordításához használjuk a "g++ z3a7.cpp -o z3a7" parancsot, a futtatáshoz pedig a "./z3a7 bemenetifájl -o bemenetifájl" parancsot.
         </para>
+        <para>
+            A kódban használt számítások ugyanazon elv mentén lesznek kiszámolva ezért ezekről most nem írnék mégegyszer. Ez a kód legnagyobb különbsége az .c kódhoz képest hogy itt a fát nem egy struktrúra segítségével dolgozzuk fel hanem egy külön osztállyal. Ennek az osztály elején ugyan úgy létrehozunk egy gyökérre mutató mutatót "fa" néven. A gyökérre mutató mutató létrehozása után itt is egyesével olvassuk be a bemenetetről ékező karaktereket amiket a kódban a "b" változóban tárolunk. Az elv itt is az mint a .c megvalósításban, ha a csomópont értéke NULL akkor ott létrehozunk két új mellékágat amiknek NULL értéket adunk és a mutató visszaugrik a gyökérre, azonban ha nem NULL az értéke akkor áthelyezzük a mutatót az új csomópontra és olvassuk a következő bemenetet.
+            <programlisting language="c"><![CDATA[
+                class LZWBinFa
+{
+public:
+    LZWBinFa ():fa (&gyoker)
+    {
+    }
+    ~LZWBinFa ()
+    {
+        szabadit (gyoker.egyesGyermek ());
+        szabadit (gyoker.nullasGyermek ());
+    }
+    void operator<< (char b)
+    {
+        if (b == '0')
+        {  
+            if (!fa->nullasGyermek ())
+            {
+                Csomopont *uj = new Csomopont ('0');
+                
+                fa->ujNullasGyermek (uj);
+            
+                fa = &gyoker;
+            }
+            else            
+            {
+           
+                fa = fa->nullasGyermek ();
+            }
+        }
+        else
+        {
+            if (!fa->egyesGyermek ())
+            {
+                Csomopont *uj = new Csomopont ('1');
+                fa->ujEgyesGyermek (uj);
+                fa = &gyoker;
+            }
+            else
+            {
+                fa = fa->egyesGyermek ();
+            }
+        }
+    } 
+               void kiir (void)
+    {
+        melyseg = 0;
+        kiir (&gyoker, std::cout);
+    }
+    int getMelyseg (void);
+    double getAtlag (void);
+    double getSzoras (void);
+    friend std::ostream & operator<< (std::ostream & os, LZWBinFa & bf)
+    {
+        bf.kiir (os);
+        return os;
+    }
+    void kiir (std::ostream & os)
+    {
+        melyseg = 0;
+        kiir (&gyoker, os);
+    }
+                ]]></programlisting>
+Az osztály ezutáni részében egy új privát osztály hozunk létre ami a csomópont mutató mozgatásával fog foglalkozni. Ezután pedig jönnek a számítási függvények, majd pedig a main függvény.
+<programlisting language="c"><![CDATA[
+int
+main (int argc, char *argv[])
+{
+    if (argc != 4)
+    {      
+        usage ();
+        return -1;
+    }
+    char *inFile = *++argv; 
+    if (*((*++argv) + 1) != 'o')
+    {
+        usage ();
+        return -2;
+    }   
+    std::fstream beFile (inFile, std::ios_base::in);
+    if (!beFile)
+    {
+        std::cout << inFile << " nem letezik..." << std::endl;
+        usage ();
+        return -3;
+    }
+    std::fstream kiFile (*++argv, std::ios_base::out);
+    unsigned char b;        
+    LZWBinFa binFa;     
+    while (beFile.read ((char *) &b, sizeof (unsigned char)))
+        if (b == 0x0a)
+            break;
+    bool kommentben = false;
+    while (beFile.read ((char *) &b, sizeof (unsigned char)))
+    {
+        if (b == 0x3e)
+        {           
+            kommentben = true;
+            continue;
+        }
+        if (b == 0x0a)
+        {           
+            kommentben = false;
+            continue;
+        }
+        if (kommentben)
+            continue;
+        if (b == 0x4e)      
+            continue;
+        for (int i = 0; i < 8; ++i)
+        {
+            if (b & 0x80)
+                binFa << '1';
+            else   
+                binFa << '0';
+            b <<= 1;
+        }
+    }
+    kiFile << binFa;        
+    kiFile << "depth = " << binFa.getMelyseg () << std::endl;
+    kiFile << "mean = " << binFa.getAtlag () << std::endl;
+    kiFile << "var = " << binFa.getSzoras () << std::endl;
+    kiFile.close ();
+    beFile.close ();
+    return 0;
+}
+    ]]></programlisting>
+    A main legelején hibakezelések vannak, ellenőrizzük hogy 4 db parancs sori argumentum van, azok olyan alakúak amilyen alakúnak lenniük kell, hogyha valami hiba van akkor arról értesítjük a felhasználót és a program leáll. Hogyha minden rendben van a kiFile-ban elmentjük a kimeneti fájl nevét és elkezdjük olvasni a bemenetet egy while ciklussal, amit bit maszkolással mindig eltárolunk a "binFa"-ba amit majd átadunk a "kiFile"-nak ami elkészíti ez alapján a kimeneti fájlt.
+        </para> 
     </section>        
                 
     <section>
@@ -72,10 +536,30 @@
             fával!
         </para>
         <para>
-            Megoldás videó: 
+            Megoldás videó: <link xlink:href="https://youtu.be/qe12vdwuYYk">https://youtu.be/qe12vdwuYYk</link>
         </para>
         <para>
-            Megoldás forrása:  
+            Megoldás forrása:  <link xlink:href="https://github.com/HernyakPisti/Prog1/tree/master/bhax/thematic_tutorials/bhax_textbook/welch">https://github.com/HernyakPisti/Prog1/tree/master/bhax/thematic_tutorials/bhax_textbook/welch</link>
+        </para><para> Tanulságok, tapasztalatok, magyarázat... </para>
+        <para>
+            Ebben a feladatban lényegében csak egy karaktert kell beraknunk az előző forráskódba.
+            <programlisting language="c"><![CDATA[Csomopont gyoker;]]></programlisting>
+            Ebbe a sorban kell a Csomopont után egy "*" tenni ezzel a gyökeret mutatóvá tesszük, ám ha így fordítjuk a kódot akkor egy csomó hibaüzenet fogad minket mivel így jópár függvényt vagy értékadást avagy hivatkozást át kell írni. Ilyen sorok a következőek.
+            <programlisting language="c"><![CDATA[ LZWBinFa ()
+    {
+        gyoker = new Csomopont();
+        fa=gyoker;
+    }
+    ~LZWBinFa ()
+    {
+        szabadit (gyoker->egyesGyermek ());
+        szabadit (gyoker->nullasGyermek ());
+        if(gyoker)
+            delete gyoker;
+    }]]></programlisting>
+    Mivel a gyökér mutató ezért kell foglalni helyet neki a szabadtárban, a szabadit függvény meghívásakor is új karaktert kell használni, és mivel a gyökérnek foglaltunk helyet ezt majd törölni is kell.
+    <programlisting language="c"><![CDATA[fa = gyoker;]]></programlisting>
+    Hasonlóan az előző kód részlethez itt is módosítani kellet a kódot, mivel már nem a címet kell átadni hanem magát a mutatót emiatt márcsak a "fa=gyoker;" kifejezés elég.
         </para>
     </section>                     
 
@@ -86,10 +570,66 @@
             értékadásra alapozva!
         </para>
         <para>
-            Megoldás videó: 
+            Megoldás videó: <link xlink:href="https://youtu.be/qe12vdwuYYk">https://youtu.be/qe12vdwuYYk</link>
         </para>
         <para>
-            Megoldás forrása:  
+            Megoldás forrása:  <link xlink:href="https://github.com/HernyakPisti/Prog1/tree/master/bhax/thematic_tutorials/bhax_textbook/welch">https://github.com/HernyakPisti/Prog1/tree/master/bhax/thematic_tutorials/bhax_textbook/welch</link>
+        </para><para> Tanulságok, tapasztalatok, magyarázat... </para>
+        <para>
+            Ebben a feladatban leszeretnénk másolni az eredeti fát, ehhez létrehozunk még egy binfát binFa2 néven, amivel az eredetit másoljuk le, ellenőrzés képp ki is írjuk az alábbi kód részlettel
+            <programlisting language="c"><![CDATA[ 
+             LZWBinFa binFa2 (binFa);
+
+    kiFile << binFa2;
+
+    kiFile << "depth = " << binFa2.getMelyseg () << std::endl;
+    kiFile << "mean = " << binFa2.getAtlag () << std::endl;
+    kiFile << "var = " << binFa2.getSzoras () << std::endl;]]></programlisting>
+    Hogy ezt a másolást megtudjuk tenni egy másoló konstruktorra és a másoló értékadás konstruktorra lesz szükségünk ami az eredeti kódban privát osztályban van, ezért onnan ki kell hozni. A másoláshoz az eredetit adjuk meg paraméternek ahol egy másolo függvényt fogunk használni amit majd lentebb nézzük meg. Ennek a függvénynek megkell adni az eredeti gyökér mutatóját és az eredeti fa mutatóját. A lentebbi kód részletben látjuk ezt
+    <programlisting language="c"><![CDATA[  LZWBinFa (const LZWBinFa & eredeti)
+    {
+        std::cout << "másoló konstruktor\n";
+        gyoker = masol(eredeti.gyoker, eredeti.fa);
+    }]]></programlisting>
+    A másoló érték adásnál peding létrehozunk egy lokális binFát "temp" néven, amit a másoló konstruktorra bízzuk, majd a "swap"-et használva megcseréljük a tempet az eredetivel, azonban ehhez szükség lesz a mozgatásra. A lentebbi kód részletben látjuk ezt.
+    <programlisting language="c"><![CDATA[
+          LZWBinFa & operator= (const LZWBinFa & eredeti)
+    {
+       std::cout << "másoló értékadás\n";
+        LZWBinFa temp {eredeti};
+        std::swap (*this, temp);
+
+        return *this;
+    }]]></programlisting>
+    A fenti kód részletekbe helyeztünk nyomkövetést hogy tudjuk a kód megfelelően működik-e, és ezért van több kiírás az előző kódhoz képest.</para><para>
+    A mozgató értékadásnál csak swap-eljük a mutatókat. Az eredeti gyökeret a mi gyökerünkkel, ugyan így az eredeti fa mutatóval. Ezt a lentebbi kód részletben látjuk.
+    <programlisting language="c"><![CDATA[LZWBinFa & operator= (LZWBinFa && eredeti)
+    {
+               std::cout << "mozgató értékadás\n";
+               std::swap(eredeti.gyoker, gyoker);
+               std::swap(eredeti.fa, fa);
+
+               return *this;
+
+    }]]></programlisting>
+    Ezután márcsak a masol függvényt kell megírnunk ami a másolást fogja elvégezni. Ez egy rekurzív függvény lesz, hasonlóan a "kiir" függvényhez Létre kell hozni egy lokális csomopont objektumot uj_csomopont néven aminek kezdetben nullptr lesz az értéke. Ezután ellenőrízzük hogy az újjonnan létre hozott csp mutató értéke nem NULL-e és ha nem akkor foglalunk neki helyet a szabadmemóriában, amiután elkérjük a csomópont értékét amit másol, ezt a getBetu függvénnyel érjük el, ezután jön a rekurzió.</para><para>
+    Ezután másoljuk a másolt csomópontnak a két mellékágát, itt hívjuk meg rekurzívan a másol függvényt.</para><para>
+    Hogyha a csomópontunk megegyezik a fa mutatóval akkor át kell állítanunk a fa mutatót az új csomópontra, ezután vissza is térhetünk az új csomóponttal. Ezt mind a lentebbi kód részletben látjuk.
+    <programlisting language="c"><![CDATA[
+        Csomopont* masol (Csomopont* csp, Csomopont* fa_ptr){
+    Csomopont* uj_csomopont=nullptr;
+
+    if(csp){
+        uj_csomopont = new Csomopont (csp->getBetu());
+        uj_csomopont->ujNullasGyermek(masol(csp->nullasGyermek(), fa_ptr));
+        uj_csomopont->ujEgyesGyermek(masol(csp->egyesGyermek(), fa_ptr));
+
+        if (csp=fa_ptr)
+            this->fa = uj_csomopont;
+    }
+
+    return uj_csomopont;
+}]]></programlisting>
         </para>
     </section>                     
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
